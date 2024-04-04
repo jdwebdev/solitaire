@@ -1,0 +1,56 @@
+@font-face {
+    font-family: "pgfont";
+    src: url("./fonts/PGFontV2.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "jpfont";
+    src: url("./fonts/PixelMplus10-Regular.ttf") format("truetype");
+}
+
+/* @font-face {
+    font-family: 'kyokasho';
+    src: url('./fonts/UDDigiKyokashoN-R.ttc');
+} */
+
+@font-face {
+    font-family: "kyokasho";
+    src: url("./fonts/UDDigiKyokashoN-R-01.ttf") format("truetype");
+}
+
+* {
+    /* font-smooth: never; */
+    -webkit-font-smoothing: none;
+    text-rendering: optimizeLegibility;
+    font-kerning: none;
+    image-rendering: pixelated;
+    margin: 0;
+}
+
+#canvas_container {
+    display: flex;
+}
+
+#canvas {
+    /* image-rendering: pixelated; */
+    /* -webkit-font-smoothing: auto; */
+    /* -webkit-font-smoothing: antialiased; */
+    /* -webkit-font-smoothing: subpixel-antialiased; */
+    /* -webkit-font-smoothing: none; */
+    /* text-rendering: auto; */
+    cursor: none;
+    /* max-width: 1350 !important;
+    max-height: 900 !important; */
+    margin: 0 auto;
+    /* flex-direction: column; */
+    align-self: center;
+}
+
+#canvas2 {
+    -webkit-font-smoothing: none;
+    image-rendering: pixelated !important;
+    /* image-rendering: crisp-edges !important; */
+    cursor: none;
+    margin: 0 auto;
+    align-self: center;
+}
