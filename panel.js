@@ -326,11 +326,11 @@ class Panel {
                     x_l = 304;
                     y_t = 0;
                     break;
-                case 3: //? Panel cardHover Game2
+                case 3: //? Panel cardHover PixelMode
                     x_l = 224;
                     y_t = 384;
                     break;
-                case 4: //? Panel cardSelect Game2
+                case 4: //? Panel cardSelect PixelMode
                     x_l = 44;
                     y_t = 1;
                     break;
@@ -918,11 +918,14 @@ class Panel {
         }
     }
 
-    drawLabel(ctx) {
+    drawCtx2() {
+        this.sp.draw(ctx2);
+        // if (sp.getParent() && sp.getParent().label != "") {
+        //     sp.getParent().drawLabel(ctx2);
+        // }
+    }
 
-        if (this.id_test == "hajime") {
-            // log("hajime draw label : " + this.label);
-        }
+    drawLabel(ctx) {
 
         ctx.font = this.fontSize + "px " + this.font;
         if (this.fontSize == 32) { // pgfont *2

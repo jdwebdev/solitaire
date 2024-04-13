@@ -116,7 +116,7 @@ class Button {
 
         this.bInactiveAnimation = false;
 
-        this.sound = "click";
+        this.sound = "";
 
         this.moveCB = null;
 
@@ -153,9 +153,9 @@ class Button {
                 x_l = 1;
                 y_t = 37;
                 break;
-            case 1:  //? Gris avec ombre
-                x_l = 50;
-                y_t = 14;
+            case 1:  //? Card
+                x_l = 112;
+                y_t = 0;
                 break;
             case 11: //? Essai pour button avec animation
                 // x_l = 0;
@@ -441,6 +441,7 @@ class Button {
 
     setTextCenterY() {
         this.textOffsetY = Math.floor(this.height * 0.5) + 2;
+        this.textOffsetYOrigin = this.textOffsetY;
     }
 
 
@@ -580,26 +581,25 @@ class Button {
         this.fontBackgroundColor = this.fontBackgroundColor[0] + "," + this.fontBackgroundColor[1] + "," + this.fontBackgroundColor[2] + "," + this.alpha + ")";
     }
 
-    //? Jamais appelé (ancienne version ?)
-    static draw() {
-        Button.currentList.forEach(b => {
-            if (b.state == Button.STATE.Hover && b.hoverCB) {
-                b.hoverCB.cb(b.hoverCB.arg);
-            }
-            if (!b.staticSize) {
-                for (const sp in b.getSprite()) {
-                    b.getSprite()[sp].draw(ctx);
+    drawCtx2() {
+        if (this.state == Button.STATE.Hover && this.hoverCB) {
+            this.hoverCB.cb(this.hoverCB.arg);
+        }
+        if (!this.staticSize) {
+            for (const sp in this.getSprite()) {
+                if (this.getSprite()[sp] instanceof Sprite) {
+                    this.getSprite()[sp].draw(ctx2);
                 }
-            } else {
-                b.getSprite().draw(ctx);
             }
-            if (b.label != "") {
-                b.drawLabel(ctx);
-            }
-            if (b.state == Button.STATE.Hover && b.hoverCB) {
-                b.hoverCB.cb(b.hoverCB.arg);
-            }
-        });
+        } else {
+            this.getSprite().draw(ctx2);
+        }
+        if (this.label != "") {
+            this.drawLabel(ctx2);
+        }
+        if (this.state == Button.STATE.Hover && this.hoverCB) {
+            this.hoverCB.cb(this.hoverCB.arg);
+        }
     }
 
     drawLabel(ctx) {
@@ -628,9 +628,9 @@ class Button {
             case this.ALIGN_TEXT.Center:
                 ctx.textAlign = "center";
                 if (this.bFreeLabel) {
-                    ctx.fillText(this.label, this.x + this.textOffsetX + (this.width * 0.5) + 0.5, this.y + this.textOffsetY);
+                    ctx.fillText(this.label, this.x + this.textOffsetX + (this.width * 0.5), this.y + this.textOffsetY);
                 } else {
-                    ctx.fillText(LANG[this.label], this.x + this.textOffsetX + (this.width * 0.5) + 0.5, this.y + this.textOffsetY); // +0.5 Car en centrant le texte se retrouve entre deux pixels
+                    ctx.fillText(LANG[this.label], this.x + this.textOffsetX + (this.width * 0.5), this.y + this.textOffsetY); // +0.5 Car en centrant le texte se retrouve entre deux pixels
                 }
                 break;
             case this.ALIGN_TEXT.Right:

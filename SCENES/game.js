@@ -2,6 +2,7 @@ class Game {
 
     static STATE = Object.freeze({
         Main: 0,
+        Ending: 1
     });
 
     static currentState = Game.STATE.Main;
@@ -25,7 +26,17 @@ class Game {
     static bDeck2Hover = false;
     static hover = null;
     static bDisplayOkPanel = false;
-    static listToGoTo = ""; 
+    static listToGoTo = "";
+
+    //? Ending
+    static currentPosition = "";
+    static timer = null;
+    static timerBeforeEnd = null;
+    static bStopDrawMouse = false;
+    static bRestartPanelAlready = false;
+
+    static movingList = [];
+    static endingList = [];
 
     constructor() {
     }
@@ -34,7 +45,20 @@ class Game {
         canvas.style.backgroundColor = CANVAS_ORIGIN_COLOR;
         Card.list = [];
         Card.randomList = [];
-
+        Game.movingList = [];
+        Game.endingList = [];
+        Card.inTransitionList = [];
+        Game.list = [];
+        Game.bRestartPanelAlready = false;
+        
+        Game.currentState = Game.STATE.Main;
+        Game.bStopDrawMouse = false;
+        canvas2.style.display = "none";
+        Button.list = [];
+        Button.currentList = [];
+        Panel.list = [];
+        Panel.currentList = [];
+        
         Game.lists["deck"] = [];
         Game.lists["deck2"] = [];
         Game.lists["♥"] = [];
@@ -49,21 +73,28 @@ class Game {
         Game.lists["c6"] = [];
         Game.lists["c7"] = [];
 
+        Game.currentPosition = "";
+        Game.timer = null;
+        Game.timerBeforeEnd = null;
+        
+        let startBtn = new Button({ w: 60, h: 24, v: 7}, 300, 410, null, { cb: Game.init, arg: ""}, "Game", Game.STATE.Main, "START", 1); //? 1 : btn style CARD
+        startBtn.setFreeLabel();
+        startBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        startBtn.setTextCenterY();
+        Game.list.push(startBtn.getSprite());
+        
+        let changeModeBtn = new Button({ w: 60, h: 24, v: 7}, 300, 440, null, { cb: changeMode, arg: ""}, "Game", Game.STATE.Main, "MODE", 1); //? 1 : btn style CARD
+        changeModeBtn.setFreeLabel();
+        changeModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        changeModeBtn.setTextCenterY();
+        Game.list.push(changeModeBtn.getSprite());
 
-        let cadre = new Sprite({ w: 375, h: 600 }, 0, 0, null, "card");
-        cadre.addAnimation("normal", { x: 0, y: 544 });
-        cadre.changeAnimation("normal");
-        Game.list.push(cadre);
 
-        // let JS_ENGINE = new Sprite({ w: 144, h: 16 }, centerX(144), 30, null, "card");
-        // JS_ENGINE.addAnimation("normal", { x: 64, y: 0 });
-        // JS_ENGINE.changeAnimation("normal");
-        // Game.list.push(JS_ENGINE);
-
-        let testBtn = new Button({ w: 80, h: 23, v: 6}, centerX(80), 300, null, { cb: Game.init, arg: ""}, "Game", Game.STATE.Main, "START", 0); //? 0 : btn style par défaut
-        testBtn.setFreeLabel();
-        testBtn.setFontColor(RED_BTN_SDW_COLOR);
-        Game.list.push(testBtn.getSprite());
+        // let endingBtn = new Button({ w: 60, h: 24, v: 7}, 300, 420, null, { cb: Game.end, arg: ""}, "Game", Game.STATE.Main, "END", 1); //? 1 : btn style CARD
+        // endingBtn.setFreeLabel();
+        // endingBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        // endingBtn.setTextCenterY();
+        // Game.list.push(endingBtn.getSprite());
 
         Game.DECK = new Sprite({ w: 48, h: 64 }, Card.POSITIONS["deck"].x, Card.POSITIONS["deck"].y, null, "card");
         Game.DECK.addAnimation("normal", { x: 48, y: 64 });
@@ -149,33 +180,39 @@ class Game {
             {x: Game.POS_7.x, y: Game.POS_7.y, w: Game.POS_7.width, h: Game.POS_7.height, list: "c7"}
         ]
 
-        Game.hover =  new Sprite({ w: 48, h: 64 }, 0, 0, null, "card");
+        Game.kanjiBG = new Sprite({ w: 46, h: 38 }, 0, 0, null, "card");
+        Game.kanjiBG.addAnimation("normal", { x: 336, y: 16});
+        Game.kanjiBG.changeAnimation("normal");
+        // Game.list.push(Game.kanjiBG);
+        //? 336 16 46 38
+
+        Game.hover = new Sprite({ w: 48, h: 64 }, 0, 0, null, "card");
         Game.hover.addAnimation("active", { x: 336, y: 64 });
         Game.hover.changeAnimation("active");
 
         Game.hoverPanel = new Panel({ w: 48, h: 64, v: 3 }, 10, 200, null, "Game", Game.STATE.Main, "", 1);
-        Game.selectPanel = new Panel({ w: 48, h: 64, v: 11 }, 10, 200, null, "Game", Game.STATE.Main, "", 2);
+        // Game.selectPanel = new Panel({ w: 48, h: 64, v: 11 }, 10, 200, null, "Game", Game.STATE.Main, "", 2);
+        Game.selectPanel = new Sprite({ w: 48, h: 64 }, 0, 0, null, "card");
+        Game.selectPanel.addAnimation("normal", {x: 336, y: 64 });
+        Game.selectPanel.changeAnimation("normal");
 
         Game.OK_PANEL = new Sprite({ w: 48, h: 64 }, 0, 0, null, "card");
         Game.OK_PANEL.addAnimation("normal", { x: 384, y: 64 });
         Game.OK_PANEL.changeAnimation("normal");
-        // Game.list.push(Game.OK_PANEL.getSprite());
 
         Game.bDisplayOkPanel = false;
-        //? 46 226
 
-        // log(Card.CARD_LIST["10♥"]);
-        // log(Card.CARD_LIST);
+        let randomKanjiList = randomizer(Kanji.list, Kanji.list.length);
 
-        let count = 1;
+        let count = 0;
         let originX = Card.POSITIONS["deck"].x;
         let originY = Card.POSITIONS["deck"].y;
         let yOffset = 70;
         for (let card in Card.CARD_LIST) {
             let c = Card.CARD_LIST[card];
-            let newCard = new Card("", c.name, c.type, c.x, c.y);
+            let newCard = new Card("", c.name, c.type, c.x, c.y, randomKanjiList[count]);
             newCard.getSprite().setParent(newCard);
-            // Game.list.push(newCard.getSprite());
+            count++;
         }
         
         let testArr = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
@@ -183,7 +220,7 @@ class Game {
 
         //! TESTING ---------
         //? Test A 2 3 DIAMOND
-        // let testArr = [0,1,2,3,4,5,6,7,8,9,10,11,12,  13,14,15,16,17,18,19,20,21,22,23,26,25,   24,29,33,27,30,31,32,28,34,35,36,37,38,   39,40,41,42,43,44,45,46,47,48,49,50,51];
+        // let testArr = [0,1,2,3,4,5,6,7,8,9,10,11,12,  13,14,15,16,17,18,19,20,21,22,23,26,25,   24,29,33,27,30,31,32,28,34,35, 44 ,37,38,   39,40,41,42,43,36,45,51,47,48,49,50,46];
         // let newRndArr = testArr;
         //? 
         // let testArr = [0,1,2,3,4,5,6,7,8,9,10,11,12,  13,14,15,16,17,18,19,20,21,22,23,24,25,   26,29,33,27,30,31,32,28,34,35,36,37,38,   39,40,41,42,43,44,45,46,47,48,49,50,51];
@@ -245,13 +282,130 @@ class Game {
             }
             Game.lists[c.position].push(c.sp);
             countCard++;
-            // Game.cardList.push(c.getSprite());
         });
         console.log(Card.randomList);
-        // console.log(Game.c1List[0].getParent());
+
+        //! TESTING ---------
+        // Game.DECK.changeAnimation("void");
+        // for (const pos in Game.lists) {
+        //     Game.lists[pos] = [];
+        // }
+        // // Game.list = [];
+        // Card.list.forEach(c => {
+        //     c.state = Card.STATE.Normal;
+        //     c.getSprite().changeAnimation("normal");
+        //     c.position = c.type;
+        //     Game.lists[c.position].push(c.getSprite()); 
+        // });
+        // Game.lists["c1"].push(Game.lists["♥"].pop());
+        // Game.lists["c1"][0].parent.position = "c1";
+        //! -----------------
 
         Button.resetTypeState("Game", Game.STATE.Main);
         Panel.resetTypeState("Game", Game.STATE.Main);
+    }
+
+    static checkEnd() {
+        if (Game.lists["♥"].length === 13 && 
+            Game.lists["♠"].length === 13 && 
+            Game.lists["♦"].length === 13 &&
+            Game.lists["♣"].length === 13) {
+                Game.end();
+        }
+    }
+
+    static end() {     
+        Game.bStopDrawMouse = true;
+        // ♣♥♦♠
+        Game.DECK.changeAnimation("void");
+        for (const pos in Game.lists) {
+            Game.lists[pos] = [];
+        }
+
+        Button.currentList = [];
+        Game.list = [];
+
+        Card.list.forEach(c => {
+            c.state = Card.STATE.Normal;
+            c.getSprite().changeAnimation("normal");
+            c.position = c.type;
+            Game.lists[c.position].push(c.getSprite()); 
+        });
+
+        Game.timer = new Timer(0.5, Game.throwCard.bind(Game));
+        Game.timerBeforeEnd = new Timer(0.1, Game.stopTimerBeforeEnd.bind(Game));        
+        // Game.currentState = Game.STATE.Ending;
+    }
+
+    static stopTimerBeforeEnd() {
+
+        Game.currentState = Game.STATE.Ending;
+        Game.timerBeforeEnd = null;
+
+        canvas2.style.display = "block";
+    }
+
+    static throwCard() {
+        if (Game.lists["♥"].length === 0 &&
+            Game.lists["♠"].length === 0 &&
+            Game.lists["♦"].length === 0 &&
+            Game.lists["♣"].length === 0) {
+                Game.timer = null;
+                return;
+            }
+
+        if (Game.currentPosition !== "") {
+            switch(Game.currentPosition) {
+                case "♥": Game.currentPosition = "♠"; break;
+                case "♠": Game.currentPosition = "♦"; break;
+                case "♦": Game.currentPosition = "♣"; break;
+                case "♣": Game.currentPosition = "♥"; break;
+            }
+        } else {
+            Game.currentPosition = "♥";
+        }
+
+        let card = Game.lists[Game.currentPosition][Game.lists[Game.currentPosition].length-1].parent;
+
+        let newSprite = new Sprite({ w: 48, h: 64 }, card.x, card.y, null, "end"); //? Moving Card
+        newSprite.addAnimation("normal", { x: card.sp.getAnimation("normal").origin.x, y: card.sp.getAnimation("normal").origin.y});
+        newSprite.changeAnimation("normal");
+        newSprite.sx = rnd(5, 26) / 10; //! sx = (-0.5 => -2.5 || 0.5 => 2.5)
+        if (isPair(rnd(1,101))) newSprite.sx *= -1;
+        newSprite.sy = (rnd(10, 41) / 10) *-1; //! sy = (-1.0 => -4.0)
+        Game.endingList.push(newSprite);
+
+        let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "endc"); //? Moving Card Child
+        kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+        kanjiSprite.changeAnimation("normal");
+        kanjiSprite.parentCard = card;
+        Game.endingList.push(kanjiSprite);
+
+        Game.lists[Game.currentPosition].pop();
+
+
+        if (!Game.bRestartPanelAlready) {
+            Game.bRestartPanelAlready = true;
+            Game.restartPanel = new Panel({ w: 72, h: 34 }, centerX(72), CANVAS_HEIGHT + 34, null, "GameEnding", 0, "", 0, true);
+            Game.restartPanel.setIdTest("RESTART PANEL");
+            Game.restartPanel.getSprite().addAnimation("normal", {x: 160, y: 16});
+            Game.restartPanel.getSprite().changeAnimation("normal");
+            Game.restartPanel.setDestination({ x: centerX(72), y: 400});
+            Game.restartPanel.setCanMove(true);
+            Game.restartPanel.setMovingSpeed(0.5);
+            Game.restartPanel.setMoving(true);
+            Panel.currentList.push(Game.restartPanel);
+            // MAIN_SPRITE_LIST.push(Game.restartPanel.getSprite());
+        
+            Game.restartBtn = new Button({ w: 60, h: 23, v: 7}, 6, 5, Game.restartPanel, { cb: Game.init, arg: ""}, "GameEnding", Game.STATE.Main, "RESTART", 1); //? 1 : btn style CARD
+            Game.restartBtn.setFreeLabel();
+            Game.restartBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+            Game.restartBtn.setTextCenterY();
+            Button.currentList.push(Game.restartBtn);
+            // Game.restartBtn.setState(Button.STATE.Normal);
+        }
+
+
     }
 
     static getLastOf(pList) {
@@ -260,25 +414,35 @@ class Game {
 
     static update(dt) {
 
+        if (Game.timer !== null && Game.currentState === Game.STATE.Ending) Game.timer.update(dt);
+        if (Game.timerBeforeEnd !== null) Game.timerBeforeEnd.update(dt);
+
         Sprite.manageBeforeUpdating(Game.cardList, dt);
         Sprite.manageBeforeUpdating(Game.list, dt);
+        Sprite.manageBeforeUpdating(Game.movingList, dt);
+        Sprite.manageBeforeUpdating(Game.endingList, dt);
 
         Panel.currentList.forEach(p => {
-            p.update(dt)
+            p.update(dt);
         });
 
         Game.cardList = Game.cardList.filter(sp => {
             return !sp.delete;
         });
-
         Game.list = Game.list.filter(sp => {
+            return !sp.delete;
+        });
+        Game.movingList = Game.movingList.filter(sp => {
+            return !sp.delete;
+        });
+        Game.endingList = Game.endingList.filter(sp => {
             return !sp.delete;
         });
     }
 
     static draw(ctx) {
         Sprite.manageBeforeDrawing(Game.list);
-
+        
         // Panel.currentList.forEach(p => {
         //     p.update(dt)
         // });
@@ -286,6 +450,8 @@ class Game {
         for (const cardList in Game.lists) {
             Sprite.manageCardBeforeDrawing(Game.lists[cardList], Card.POSITIONS[cardList]);
         }
+
+        Sprite.manageBeforeDrawing(Game.movingList);
 
         if (Game.bDeckHover) {
             Game.hoverPanel.x = Game.DECK.x;
@@ -306,8 +472,18 @@ class Game {
         }
         if (Game.bDeck2Hover) {
             Game.hoverPanel.x = Game.DECK2.x;
-            Game.hoverPanel.y = Game.DECK2.y;
+            Game.hoverPanel.y = Game.DECK2.y-1;
             // Game.hoverPanel.draw(ctx);
+
+            let card = Game.getLastOf("deck2");
+            if (!MOBILE) {
+                let innerHTML = card.kanji.yomi + "<br/>";
+                card.kanji.exList.forEach(t => {
+                    innerHTML += t + "<br/>"
+                });
+                yomiText.element.innerHTML = innerHTML;
+            }
+
             let sp = Game.hoverPanel.getSprite();
             if (sp != null) {
                 for (const s in sp) {
@@ -322,8 +498,14 @@ class Game {
             }
         }
 
+        Sprite.manageBeforeDrawing(Game.endingList);
+
+        if (Game.bRestartPanelAlready) {
+            Game.restartPanel.drawCtx2();
+            Game.restartBtn.drawCtx2();
+        }
+
         if (Game.bDisplayOkPanel) {
-            // log("OK display ok panel");
             Game.OK_PANEL.draw(ctx);
         }
     }

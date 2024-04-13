@@ -91,6 +91,10 @@ function centerYElement(pElement, pHeight = 0, pDistance = 0, pDirection = 0) {
     }
 }
 
+function id(pElement) {
+    return document.getElementById(pElement);
+}
+
 function text(ctx, pContent, pX, pY, pColor = BLACK_COLOR) {
     ctx.fillStyle = pColor;
     ctx.fillText(pContent, pX, pY);
@@ -567,176 +571,15 @@ function setScreenShake(pBool, pX = 5, pY = 5, pRed = true) {
     }
 }
 
-// ----------------------------------------------------
-// TODO Find a place for these : 
-// ----------------------------------------------------
-function randomizer(pArr, pNumber, pGoodAnswer) {
-
+function randomizer(pArr, pNumber) {
     let arr = [];
     for (let i = 0; i < pNumber; i++) {
-
         let rndNumber = rnd(0, pArr.length);
-        if ((pArr[rndNumber] == "di" && arr.includes("ji")) ||
-            (pArr[rndNumber] == "du" && arr.includes("zu")) ||
-            (pArr[rndNumber] == "ji" && arr.includes("di")) ||
-            (pArr[rndNumber] == "zu" && arr.includes("du")) ||
-            (pArr[rndNumber] == "ぢ" && arr.includes("じ")) ||
-            (pArr[rndNumber] == "づ" && arr.includes("ず")) ||
-            (pArr[rndNumber] == "じ" && arr.includes("ぢ")) ||
-            (pArr[rndNumber] == "ず" && arr.includes("づ")) ||
-            (pArr[rndNumber] == "ヂ" && arr.includes("ジ")) ||
-            (pArr[rndNumber] == "ヅ" && arr.includes("ズ")) ||
-            (pArr[rndNumber] == "ジ" && arr.includes("ヂ")) ||
-            (pArr[rndNumber] == "ズ" && arr.includes("ヅ"))
-        ) {
-            // console.error("randomizer : IF DI/JI DU/ZU JI/DI ZU/DU");
+        if (arr.includes(pArr[rndNumber])) {
             i--;
         } else {
-            if (arr.includes(pArr[rndNumber]) || (i == ALREADY_RANDOM && pArr[rndNumber] == pGoodAnswer)) {
-                i--;
-            } else {
-                arr.push(pArr[rndNumber]);
-            }
+            arr.push(pArr[rndNumber]);
         }
     }
     return arr;
-}
-
-function randomlyMix(pChoiceType, pNumber, pRange, pLessonRange) { // choiceType (label des btns), number : nombre de btns
-
-    let fromObj = {};
-
-    if (REMAINING_CHOICES.length == 0) {
-        resetChoices(pRange, pLessonRange);
-        TURN_NUMBER++;
-        if (TURN_NUMBER == MAX_TURN) {
-            // Game1.displayEndGamePanel({ bool: true });
-            return;
-        }
-    }
-
-    //? Création random du caractère à trouver
-    if (pRange == 1) {
-
-        let rand = REMAINING_CHOICES[rnd(0, REMAINING_CHOICES.length)];
-
-        REMAINING_CHOICES = REMAINING_CHOICES.filter(e => e != rand);
-
-        RND_CHOICE = { // Réponse
-            h: char.h[rand],
-            k: char.k[rand],
-            r: char.r[rand]
-        }
-
-
-        // Pour la liste des choix possibles
-        fromObj = { ...char };
-
-    } else {
-        let index = char.r.indexOf(pRange);
-        let rand = REMAINING_CHOICES[rnd(0, REMAINING_CHOICES.length)];
-
-        REMAINING_CHOICES = REMAINING_CHOICES.filter(e => e != rand);
-
-        RND_CHOICE = { // Réponse
-            h: char.h[rand],
-            k: char.k[rand],
-            r: char.r[rand]
-        }
-
-        // Pour la liste des choix possibles
-        if (pLessonRange) {
-
-            let indexOffset = 4;
-            if (pRange == "yo" || pRange == "n") indexOffset = 2;
-
-            fromObj = {
-                h: char.h.slice(index - indexOffset, index + 1),
-                k: char.k.slice(index - indexOffset, index + 1),
-                r: char.r.slice(index - indexOffset, index + 1)
-            }
-
-            if (indexOffset == 2) {
-                fromObj.h.push("い");
-                fromObj.h.push("え");
-                fromObj.k.push("イ");
-                fromObj.k.push("エ");
-                fromObj.r.push("i");
-                fromObj.r.push("e");
-            }
-
-        } else {
-            fromObj = {
-                h: char.h.slice(0, index + 1),
-                k: char.k.slice(0, index + 1),
-                r: char.r.slice(0, index + 1)
-            }
-        }
-    }
-
-    //? Liste des choix possibles
-    switch (pChoiceType) {
-        case "h":
-            RND_ARR = randomizer(fromObj.h, pNumber, RND_CHOICE.h);
-            if (!RND_ARR.includes(RND_CHOICE.h)) { // Si le choix ne fait pas déjà partie de la liste des btns, l'ajouter à une place random
-                if (RND_CHOICE.h == "ぢ" && RND_ARR.includes("じ")) {
-                    // console.error("ぢ remplace じ");
-                    RND_ARR[RND_ARR.indexOf("じ")] = RND_CHOICE.h;
-                } else if (RND_CHOICE.h == "じ" && RND_ARR.includes("ぢ")) {
-                    // console.error("じ remplace ぢ");
-                    RND_ARR[RND_ARR.indexOf("ぢ")] = RND_CHOICE.h;
-                } else if (RND_CHOICE.h == "ず" && RND_ARR.includes("づ")) {
-                    // console.error("ず remplace づ");
-                    RND_ARR[RND_ARR.indexOf("づ")] = RND_CHOICE.h;
-                } else if (RND_CHOICE.h == "づ" && RND_ARR.includes("ず")) {
-                    // console.error("づ remplace ず");
-                    RND_ARR[RND_ARR.indexOf("ず")] = RND_CHOICE.h;
-                } else {
-                    RND_ARR[fixedRandom()] = RND_CHOICE.h;
-                }
-            }
-            break;
-        case "k":
-            RND_ARR = randomizer(fromObj.k, pNumber, RND_CHOICE.k);
-            if (!RND_ARR.includes(RND_CHOICE.k)) {
-                if (RND_CHOICE.k == "ヂ" && RND_ARR.includes("ジ")) {
-                    // console.error("ヂ remplace ジ");
-                    RND_ARR[RND_ARR.indexOf("ジ")] = RND_CHOICE.k;
-                } else if (RND_CHOICE.k == "ジ" && RND_ARR.includes("ヂ")) {
-                    // console.error("ジ remplace ヂ");
-                    RND_ARR[RND_ARR.indexOf("ヂ")] = RND_CHOICE.k;
-                } else if (RND_CHOICE.k == "ズ" && RND_ARR.includes("ヅ")) {
-                    // console.error("ズ remplace ヅ");
-                    RND_ARR[RND_ARR.indexOf("ヅ")] = RND_CHOICE.k;
-                } else if (RND_CHOICE.k == "ヅ" && RND_ARR.includes("ズ")) {
-                    // console.error("ヅ remplace ズ");
-                    RND_ARR[RND_ARR.indexOf("ズ")] = RND_CHOICE.k;
-                } else {
-                    RND_ARR[fixedRandom()] = RND_CHOICE.k;
-                }
-            }
-            break;
-        case "r":
-            RND_ARR = randomizer(fromObj.r, pNumber, RND_CHOICE.r);
-            if (!RND_ARR.includes(RND_CHOICE.r)) {
-                if (RND_CHOICE.r == "di" && RND_ARR.includes("ji")) {
-                    // console.error("DI remplace JI");
-                    RND_ARR[RND_ARR.indexOf("ji")] = RND_CHOICE.r;
-                } else if (RND_CHOICE.r == "ji" && RND_ARR.includes("di")) {
-                    // console.error("JI remplace DI");
-                    RND_ARR[RND_ARR.indexOf("di")] = RND_CHOICE.r;
-                } else if (RND_CHOICE.r == "zu" && RND_ARR.includes("du")) {
-                    // console.error("ZU remplace DU");
-                    RND_ARR[RND_ARR.indexOf("du")] = RND_CHOICE.r;
-                } else if (RND_CHOICE.r == "du" && RND_ARR.includes("zu")) {
-                    // console.error("DU remplace DU");
-                    RND_ARR[RND_ARR.indexOf("zu")] = RND_CHOICE.r;
-                } else {
-                    RND_ARR[fixedRandom()] = RND_CHOICE.r;
-                }
-            }
-            break;
-        default:
-            ;
-    }
 }

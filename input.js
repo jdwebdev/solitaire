@@ -562,10 +562,17 @@ function keyUp(k) {
 
     if (k.code == "KeyE") {}
 
-    if (k.code == "Enter") {}
+    if (k.code == "Enter") {
+        
+    }
+    if (k.code == "KeyQ") {
+        FRAME_BY_FRAME = !FRAME_BY_FRAME;
+    }
 
     if (k.code == "Space") {
-        // debug_STOP = !debug_STOP;
+        debug_STOP = !debug_STOP;
+        FRAME_BY_FRAME = debug_STOP;
+        if (!debug_STOP) requestAnimationFrame(run);
 
         // console.log(" --- MainMenu.randomKanaSpriteList : --- ");
         // console.table(MainMenu.randomKanaSpriteList);
@@ -605,11 +612,97 @@ function pick(x, y) {
 //! | )   ( | _   | )   ( || (___) |  \   /  | (____/\
 //! |/     \|(_)  |/     \|(_______)   \_/   (_______/
 if (Input.MOUSE_MOVE) {
+    canvas2.addEventListener("mousemove", e => {
+        if (Game.currentState === Game.STATE.Ending || PixelMode.currentState === PixelMode.STATE.Ending) {
+            const mouseX = e.layerX / SCALE_X;
+            const mouseY = e.layerY / SCALE_Y;    
+            MOUSE_SPRITE.x = mouseX;
+            MOUSE_SPRITE.y = mouseY;
+    
+            Button.currentList.forEach(b => {
+                if (b.getState() != Button.STATE.Inactive && !b.bMoving) {
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, b.getPosition().x, b.getPosition().y, b.getSize().w, b.getSize().h)) {
+                        if ((b.getSprite().tl != undefined && b.getSprite().tl.currentAnimation.name != "down") || // not staticSize
+                            (b.getSprite().tl == undefined && b.getSprite().currentAnimation.name != "down")) {    // staticSize
+    
+                            if (b.getState() != Button.STATE.Hover) {
+                                if (b.hoverCB) {
+                                    b.hoverCB.cb(b.hoverCB.arg);
+                                }
+    
+                                // Sound.play("hover");
+                                if (b instanceof CheckboxBtn) {
+                                    if (b.bChecked) {
+                                        // b.setState(CheckboxBtn.STATE.Hover);
+                                        // b.changeSpriteAnimation("c_hover");
+                                        // MOUSE_SPRITE.changeAnimation("hover");
+                                    } else {
+                                        b.setState(CheckboxBtn.STATE.Hover);
+                                        b.changeSpriteAnimation("hover");
+                                        MOUSE_SPRITE.changeAnimation("hover");
+                                    }
+                                } else {
+                                    b.setState(Button.STATE.Hover);
+                                    b.changeSpriteAnimation("hover");
+                                    MOUSE_SPRITE.changeAnimation("hover");
+                                }
+    
+                                if (b.id_test == "V") {
+                                    b.textOffsetX = b.textOffsetXHover;
+                                    b.textOffsetY = b.textOffsetYHover;
+                                    b.bTextOffsetChanged = true;
+                                }
+    
+                            } else {
+                                if (MOUSE_SPRITE.currentAnimation.name != "hover") {
+                                    MOUSE_SPRITE.changeAnimation("hover");
+                                }
+                            }
+                        }
+                    } else { //? Mouse Moving and NO collision
+                        if (b.getState() == Button.STATE.Hover) {
+                            if (b.hoverCB) {
+                                b.getTooltip().forEach(sp => {
+                                    if (sp instanceof Sprite) {
+                                        sp.delete = true;
+                                        sp.currentFrame = 0;
+                                    } else {
+                                        sp.getSprite().delete = true;
+                                    }
+                                })
+                                if (b.getHoverOffset()) {
+                                    let func = translate.bind(b, { x: b.getHoverOffset().x, y: b.getHoverOffset().y }, true);
+                                    func();
+                                }
+                            }
+                            
+                            if (b instanceof CheckboxBtn) {
+                                if (b.bChecked) {
+                                    b.setState(Button.STATE.Normal);
+                                    b.changeSpriteAnimation("c_normal");
+                                } else {
+                                    b.setState(Button.STATE.Normal);
+                                    b.changeSpriteAnimation("normal");
+                                }
+                            } else {
+                                b.setState(Button.STATE.Normal);
+                                b.changeSpriteAnimation("normal");
+                            }
+                            
+                            MOUSE_SPRITE.changeAnimation("normal");
+    
+                        } else {
+                            if (b.bTextOffsetChanged) b.resetOffsets();
+                        }
+                    }
+                }
+            });
+        }
+    })
     canvas.addEventListener("mousemove", e => {
     
         const mouseX = e.layerX / SCALE_X;
         const mouseY = e.layerY / SCALE_Y;
-        // console.log(mouseY);
     
         MOUSE_SPRITE.x = mouseX;
         MOUSE_SPRITE.y = mouseY;
@@ -637,7 +730,7 @@ if (Input.MOUSE_MOVE) {
                             if (Card.check(Card.selected.name, Card.selected.type, name, HSDC.type, false)) {
                                 Game.OK_PANEL.x = HSDC.x;
                                 Game.OK_PANEL.y = HSDC.y;
-                                Game.bDisplayOkPanel = true
+                                Game.bDisplayOkPanel = true;
                                 Game.listToGoTo = HSDC.type;
                             }
                         }
@@ -671,22 +764,35 @@ if (Input.MOUSE_MOVE) {
                     } else {
                         Game.bDeck2Hover = false;
                     }
+
+                    //? CHECK HSDC
+                    Game.HSDC_LIST.forEach(HSDC => {
+                        if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
+                            bCollideHSDC = true;
+                            let name = "";
+                            if (Game.lists[HSDC.type].length > 0) {
+                                Game.getLastOf(HSDC.type).bHovering = true;
+                            }
+                        } else {
+                            if (Game.lists[HSDC.type].length > 0) {
+                                if (Game.getLastOf(HSDC.type).bHovering) {
+                                    Game.getLastOf(HSDC.type).bHovering = false;
+                                }
+                            }
+                        }
+                    });
+
                 }
                 if (!CollisionManager.MouseCollision(mouseX, mouseY, Game.DECK2.x, Game.DECK2.y, Game.DECK2.width, Game.DECK2.height)) {
                     Game.bDeck2Hover = false;
-                    
                 } else {
                 }
 
                 if (!bCollideHSDC) { //? Ce n'est plus la peine de chercher ici, si la collision se fait là haut
-
-                    // TODO
-                    // ! TEST : collision by c1 c2 etc. lists order desc
                     let bOneCollision = false; //? to check if there's at least one collision
                     let bAlreadyColliding = false;
                     Game.POS_LIST.forEach(pos => { //? Collision with c1 c2 etc.
                         for (let i = Game.lists[pos.list].length-1; i >=0; i--) {
-                            // log("card: " + Game.lists[pos.list][i].getParent().infos());
                             if (Card.selected === null) {
                                 let card = Game.lists[pos.list][i].getParent();
                                 if (card.state === Card.STATE.Normal && !card.bSelect) {
@@ -695,15 +801,11 @@ if (Input.MOUSE_MOVE) {
                                             bOneCollision = true;
                                             bAlreadyColliding = true;
                                             card.bHovering = true
-                                            // log("First Collision with : " + card.infos());
-                                            // if (Game.getLastOf(pos.list).nameType() !== card.nameType()) {
                                             if (i !== Game.lists[pos.list].length-1) {
-                                                // log("Different from last one !!");
-                                                // log("juste en dessous : " + Game.lists[pos.list][i+1].getParent().infos());
+                                                yomiText.element.innerHTML = "";
                                                 Card.multiHover = true;
                                                 Card.multiHoverPos = pos.list;
                                                 for (let j = i+1; j <= Game.lists[pos.list].length-1; j++) {
-                                                    // log("inside j loop: " + Game.lists[pos.list][j].getParent().infos());
                                                     Game.lists[pos.list][j].getParent().bHovering = true;
                                                     
                                                 } 
@@ -731,54 +833,22 @@ if (Input.MOUSE_MOVE) {
                     if (!bOneCollision) {
                         Card.multiHover = false;
                         Card.multiHoverPos = "";
+                        yomiText.element.innerHTML = "";
                     }
 
                     Card.list.forEach(c => {
                         if (Card.selected === null) {
-                            // if (c.state === Card.STATE.Normal && !c.bSelect) {
-
-                            //     if (c.position != "deck2") {
-
-                            //         if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
-                            //             // log("collision: " + c.name + " " + c.type);
-                            //             // Game.hover.x = c.x;
-                            //             // Game.hover.y = c.y;
-                            //             // Game.hover.changeAnimation("active");
-                            //             c.bHovering = true;
-                            //         } else {
-                            //             if (c.bHovering) {
-                            //                 c.bHovering = false;
-                            //             }
-                            //         }
-
-                            //     }
-
-                            // } else if (c.state === Card.STATE.FaceDown && (c.position == "c2" || c.position == "c3" || c.position == "c4" || c.position == "c5" || c.position == "c6" || c.position == "c7")) {
-                            //     if (c.name+c.type === Game.getLastOf(c.position).name + Game.getLastOf(c.position).type) {
-                            //         if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
-                            //             c.bHovering = true;
-                            //         } else {
-                            //             c.bHovering = false;
-                            //         }
-                            //     }
-                            //     // log("facedown")
-                            // }
     
                         } else { //? Card Selected !
                             
                             if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
-                                // console.log("la : " + c.infos());
                                 if (c.position !== "deck" && c.position !== "deck2") {
                                     if (Game.lists[c.position].length > 0) {
-                                        // console.log(Game.lists[c.position][Game.lists[c.position].length-1].getParent().infos());
                                         if (c.name === Game.getLastOf(c.position).name &&
                                             c.type === Game.getLastOf(c.position).type &&
                                             (Card.selected.name !== c.name || Card.selected.type !== c.type)) {
-                                            // console.log("SAME card as LAST card")
                                             
-                                            if (Game.getLastOf(c.position).state === Card.STATE.FaceDown) {
-                                                // log("Facedown : " + c.name + c.type);
-                                                
+                                            if (Game.getLastOf(c.position).state === Card.STATE.FaceDown) {                                                
                                                 Game.OK_PANEL.x = Game.getLastOf(c.position).x;
                                                 Game.OK_PANEL.y = Game.getLastOf(c.position).y + 14;
                                                 Game.bDisplayOkPanel = true;
@@ -792,10 +862,8 @@ if (Input.MOUSE_MOVE) {
                                                     Game.listToGoTo = receiver.position;
                                                 }
                                             }
-                                            // if ()
                                         }
                                     } else { //? Void
-                                        // log("VOID")
                                         Game.OK_PANEL.x = Card.POSITIONS[c.position].x;
                                         Game.OK_PANEL.x = Card.POSITIONS[c.position].y;
                                         Game.bDisplayOkPanel = true;
@@ -808,85 +876,278 @@ if (Input.MOUSE_MOVE) {
                         
                     });
                 }
-            }
-            // if (MainMenu.state != MainMenu.STATE.Transition) {
-    
-                Button.currentList.forEach(b => {
-                    if (b.getState() != Button.STATE.Inactive && !b.bMoving) {
-                        if (CollisionManager.MouseCollision(mouseX, mouseY, b.getPosition().x, b.getPosition().y, b.getSize().w, b.getSize().h)) {
-                            if ((b.getSprite().tl != undefined && b.getSprite().tl.currentAnimation.name != "down") || // not staticSize
-                                (b.getSprite().tl == undefined && b.getSprite().currentAnimation.name != "down")) {    // staticSize
-    
-                                if (b.getState() != Button.STATE.Hover) {
-                                    if (b.hoverCB) {
-                                        b.hoverCB.cb(b.hoverCB.arg);
-                                    }
-    
-                                    // Sound.play("hover");
-                                    if (b instanceof CheckboxBtn) {
-                                        if (b.bChecked) {
-                                            // b.setState(CheckboxBtn.STATE.Hover);
-                                            // b.changeSpriteAnimation("c_hover");
-                                            // MOUSE_SPRITE.changeAnimation("hover");
+            } else if (mainState === MAIN_STATE.PixelMode) {
+                let bCollideHSDC = false;
+                // let bCollide = false;
+
+                if (Card.selected !== null) {
+                    if (PixelMode.bDisplayOkPanel) {
+                        if (CollisionManager.MouseCollision(mouseX, mouseY, PixelMode.OK_PANEL.x, PixelMode.OK_PANEL.y, PixelMode.OK_PANEL.width, PixelMode.OK_PANEL.height)) {
+                        } else {
+                            PixelMode.bDisplayOkPanel = false;
+                        }
+                    }
+
+                    //? CHECK HSDC
+                    PixelMode.HSDC_LIST.forEach(HSDC => {
+                        if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
+                            bCollideHSDC = true;
+                            let name = "";
+                            if (PixelMode.lists[HSDC.type].length > 0) name = PixelMode.getLastOf(HSDC.type).name;
+                            if (Card.check(Card.selected.name, Card.selected.type, name, HSDC.type, false)) {
+                                PixelMode.OK_PANEL.x = HSDC.x;
+                                PixelMode.OK_PANEL.y = HSDC.y;
+                                PixelMode.bDisplayOkPanel = true;
+                                PixelMode.listToGoTo = HSDC.type;
+                            }
+                        }
+                    });
+
+                    if (!bCollideHSDC) {
+                        PixelMode.POS_LIST.forEach(POS => {
+                            if (PixelMode.lists[POS.list].length === 0) {
+                                if (CollisionManager.MouseCollision(mouseX, mouseY, POS.x, POS.y, POS.w, POS.h)) {
+                                    PixelMode.OK_PANEL.x = POS.x;
+                                    PixelMode.OK_PANEL.y = POS.y;
+                                    PixelMode.bDisplayOkPanel = true;
+                                    PixelMode.listToGoTo = POS.list;
+                                }
+                            }
+                        });
+                    }
+                } else { //? CHECK DECKs
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, PixelMode.DECK.x, PixelMode.DECK.y, PixelMode.DECK.width, PixelMode.DECK.height)) {
+                        if (PixelMode.lists["deck"].length > 0 || PixelMode.lists["deck2"].length > 0) {
+                            PixelMode.bDeckHover = true;
+                        }
+                    } else {
+                        PixelMode.bDeckHover = false;
+                    }
+                    // bDeck2Hover
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, PixelMode.DECK2.x, PixelMode.DECK2.y, PixelMode.DECK2.width, PixelMode.DECK2.height)) {
+                        if (PixelMode.lists["deck2"].length > 0) {
+                            PixelMode.bDeck2Hover = true;
+                        }
+                    } else {
+                        PixelMode.bDeck2Hover = false;
+                    }
+
+                    //? CHECK HSDC
+                    PixelMode.HSDC_LIST.forEach(HSDC => {
+                        if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
+                            bCollideHSDC = true;
+                            let name = "";
+                            if (PixelMode.lists[HSDC.type].length > 0) {
+                                PixelMode.getLastOf(HSDC.type).bHovering = true;
+                            }
+                        } else {
+                            if (PixelMode.lists[HSDC.type].length > 0) {
+                                if (PixelMode.getLastOf(HSDC.type).bHovering) {
+                                    PixelMode.getLastOf(HSDC.type).bHovering = false;
+                                }
+                            }
+                        }
+                    });
+
+                }
+                if (!CollisionManager.MouseCollision(mouseX, mouseY, PixelMode.DECK2.x, PixelMode.DECK2.y, PixelMode.DECK2.width, PixelMode.DECK2.height)) {
+                    PixelMode.bDeck2Hover = false;
+                } else {
+                }
+
+                if (!bCollideHSDC) { //? Ce n'est plus la peine de chercher ici, si la collision se fait là haut
+                    let bOneCollision = false; //? to check if there's at least one collision
+                    let bAlreadyColliding = false;
+                    PixelMode.POS_LIST.forEach(pos => { //? Collision with c1 c2 etc.
+                        for (let i = PixelMode.lists[pos.list].length-1; i >=0; i--) {
+                            if (Card.selected === null) {
+                                let card = PixelMode.lists[pos.list][i].getParent();
+                                if (card.state === Card.STATE.Normal && !card.bSelect) {
+                                    if (!bAlreadyColliding && CollisionManager.MouseCollision(mouseX, mouseY, card.x, card.y, card.width, card.height)) {
+                                        bOneCollision = true;
+                                        bAlreadyColliding = true;
+                                        card.bHovering = true
+                                        if (i !== PixelMode.lists[pos.list].length-1) {
+                                            Card.multiHover = true;
+                                            Card.multiHoverPos = pos.list;
+                                            for (let j = i+1; j <= PixelMode.lists[pos.list].length-1; j++) {
+                                                PixelMode.lists[pos.list][j].getParent().bHovering = true;
+                                                
+                                            } 
                                         } else {
-                                            b.setState(CheckboxBtn.STATE.Hover);
-                                            b.changeSpriteAnimation("hover");
-                                            MOUSE_SPRITE.changeAnimation("hover");
+                                            Card.multiHover = false;
+                                            Card.multiHoverPos = "";
                                         }
                                     } else {
-                                        b.setState(Button.STATE.Hover);
-                                        b.changeSpriteAnimation("hover");
-                                        MOUSE_SPRITE.changeAnimation("hover");
+                                        card.bHovering = false;
                                     }
-    
-                                    if (b.id_test == "V") {
-                                        b.textOffsetX = b.textOffsetXHover;
-                                        b.textOffsetY = b.textOffsetYHover;
-                                        b.bTextOffsetChanged = true;
-                                    }
-    
-                                } else {
-                                    if (MOUSE_SPRITE.currentAnimation.name != "hover") {
-                                        MOUSE_SPRITE.changeAnimation("hover");
+                                } else if (card.state === Card.STATE.FaceDown) {
+                                    if (card.name+card.type === PixelMode.getLastOf(pos.list).name + PixelMode.getLastOf(pos.list).type) {
+                                        if (CollisionManager.MouseCollision(mouseX, mouseY, card.x, card.y, card.width, card.height)) {
+                                            card.bHovering = true;
+                                            bOneCollision = true;
+                                        } else {
+                                            card.bHovering = false;
+                                        }
                                     }
                                 }
                             }
-                        } else { //? Mouse Moving and NO collision
-                            if (b.getState() == Button.STATE.Hover) {
-                                if (b.hoverCB) {
-                                    b.getTooltip().forEach(sp => {
-                                        if (sp instanceof Sprite) {
-                                            sp.delete = true;
-                                            sp.currentFrame = 0;
-                                        } else {
-                                            sp.getSprite().delete = true;
+                        }
+                    })
+                    if (!bOneCollision) {
+                        Card.multiHover = false;
+                        Card.multiHoverPos = "";
+                    }
+
+                    Card.list.forEach(c => {
+                        if (Card.selected === null) {
+                            // if (c.state === Card.STATE.Normal && !c.bSelect) {
+
+                            //     if (c.position != "deck2") {
+
+                            //         if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
+                            //             // log("collision: " + c.name + " " + c.type);
+                            //             // PixelMode.hover.x = c.x;
+                            //             // PixelMode.hover.y = c.y;
+                            //             // PixelMode.hover.changeAnimation("active");
+                            //             c.bHovering = true;
+                            //         } else {
+                            //             if (c.bHovering) {
+                            //                 c.bHovering = false;
+                            //             }
+                            //         }
+
+                            //     }
+
+                            // } else if (c.state === Card.STATE.FaceDown && (c.position == "c2" || c.position == "c3" || c.position == "c4" || c.position == "c5" || c.position == "c6" || c.position == "c7")) {
+                            //     if (c.name+c.type === PixelMode.getLastOf(c.position).name + PixelMode.getLastOf(c.position).type) {
+                            //         if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
+                            //             c.bHovering = true;
+                            //         } else {
+                            //             c.bHovering = false;
+                            //         }
+                            //     }
+                            //     // log("facedown")
+                            // }
+    
+                        } else { //? Card Selected !
+                            
+                            if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
+                                if (c.position !== "deck" && c.position !== "deck2") {
+                                    if (PixelMode.lists[c.position].length > 0) {
+                                        if (c.name === PixelMode.getLastOf(c.position).name &&
+                                            c.type === PixelMode.getLastOf(c.position).type &&
+                                            (Card.selected.name !== c.name || Card.selected.type !== c.type)) {
+                                            
+                                            if (PixelMode.getLastOf(c.position).state === Card.STATE.FaceDown) {
+                                                PixelMode.OK_PANEL.x = PixelMode.getLastOf(c.position).x;
+                                                PixelMode.OK_PANEL.y = PixelMode.getLastOf(c.position).y + 10;
+                                                PixelMode.bDisplayOkPanel = true;
+                                                PixelMode.listToGoTo = c.position;
+                                            } else {
+                                                let receiver = PixelMode.getLastOf(c.position);
+                                                if (Card.check(Card.selected.name, Card.selected.type, receiver.name, receiver.type, true)) {
+                                                    PixelMode.OK_PANEL.x = receiver.x;
+                                                    PixelMode.OK_PANEL.y = receiver.y+10;
+                                                    PixelMode.bDisplayOkPanel = true;
+                                                    PixelMode.listToGoTo = receiver.position;
+                                                }
+                                            }
                                         }
-                                    })
-                                    if (b.getHoverOffset()) {
-                                        let func = translate.bind(b, { x: b.getHoverOffset().x, y: b.getHoverOffset().y }, true);
-                                        func();
+                                    } else { //? Void
+                                        PixelMode.OK_PANEL.x = Card.POSITIONS[c.position].x;
+                                        PixelMode.OK_PANEL.x = Card.POSITIONS[c.position].y;
+                                        PixelMode.bDisplayOkPanel = true;
+
                                     }
                                 }
-                                
+                            }
+                            
+                        }
+                        
+                    });
+                }
+            }
+            // if (MainMenu.state != MainMenu.STATE.Transition) {
+    
+            Button.currentList.forEach(b => {
+                if (b.getState() != Button.STATE.Inactive && !b.bMoving) {
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, b.getPosition().x, b.getPosition().y, b.getSize().w, b.getSize().h)) {
+                        if ((b.getSprite().tl != undefined && b.getSprite().tl.currentAnimation.name != "down") || // not staticSize
+                            (b.getSprite().tl == undefined && b.getSprite().currentAnimation.name != "down")) {    // staticSize
+
+                            if (b.getState() != Button.STATE.Hover) {
+                                if (b.hoverCB) {
+                                    b.hoverCB.cb(b.hoverCB.arg);
+                                }
+
+                                // Sound.play("hover");
                                 if (b instanceof CheckboxBtn) {
                                     if (b.bChecked) {
-                                        b.setState(Button.STATE.Normal);
-                                        b.changeSpriteAnimation("c_normal");
+                                        // b.setState(CheckboxBtn.STATE.Hover);
+                                        // b.changeSpriteAnimation("c_hover");
+                                        // MOUSE_SPRITE.changeAnimation("hover");
                                     } else {
-                                        b.setState(Button.STATE.Normal);
-                                        b.changeSpriteAnimation("normal");
+                                        b.setState(CheckboxBtn.STATE.Hover);
+                                        b.changeSpriteAnimation("hover");
+                                        MOUSE_SPRITE.changeAnimation("hover");
                                     }
+                                } else {
+                                    b.setState(Button.STATE.Hover);
+                                    b.changeSpriteAnimation("hover");
+                                    MOUSE_SPRITE.changeAnimation("hover");
+                                }
+
+                                if (b.id_test == "V") {
+                                    b.textOffsetX = b.textOffsetXHover;
+                                    b.textOffsetY = b.textOffsetYHover;
+                                    b.bTextOffsetChanged = true;
+                                }
+
+                            } else {
+                                if (MOUSE_SPRITE.currentAnimation.name != "hover") {
+                                    MOUSE_SPRITE.changeAnimation("hover");
+                                }
+                            }
+                        }
+                    } else { //? Mouse Moving and NO collision
+                        if (b.getState() == Button.STATE.Hover) {
+                            if (b.hoverCB) {
+                                b.getTooltip().forEach(sp => {
+                                    if (sp instanceof Sprite) {
+                                        sp.delete = true;
+                                        sp.currentFrame = 0;
+                                    } else {
+                                        sp.getSprite().delete = true;
+                                    }
+                                })
+                                if (b.getHoverOffset()) {
+                                    let func = translate.bind(b, { x: b.getHoverOffset().x, y: b.getHoverOffset().y }, true);
+                                    func();
+                                }
+                            }
+                            
+                            if (b instanceof CheckboxBtn) {
+                                if (b.bChecked) {
+                                    b.setState(Button.STATE.Normal);
+                                    b.changeSpriteAnimation("c_normal");
                                 } else {
                                     b.setState(Button.STATE.Normal);
                                     b.changeSpriteAnimation("normal");
                                 }
-                                
-                                MOUSE_SPRITE.changeAnimation("normal");
-    
+                            } else {
+                                b.setState(Button.STATE.Normal);
+                                b.changeSpriteAnimation("normal");
                             }
+                            
+                            MOUSE_SPRITE.changeAnimation("normal");
+
+                        } else {
+                            if (b.bTextOffsetChanged) b.resetOffsets();
                         }
                     }
-                });
+                }
+            });
     
                 if (Input.bKeyboardActive && !SETTINGS) {
                     Input.keyboardList.forEach(b => {
@@ -1071,6 +1332,145 @@ if (Input.CONTEXT_MENU) {
 //! |/     \|(_)  (______/ (_______)(_______)|/    )_)
 
 if (Input.MOUSE_DOWN) {
+    canvas2.addEventListener("mousedown", e => {
+        if (!inTransition() && e.button == 0 && mainState != MAIN_STATE.Error) { // Left click !
+    
+            const mouseX = e.layerX / SCALE_X;
+            const mouseY = e.layerY / SCALE_Y;
+    
+            if (RESOLUTION_SETTINGS) {
+                if (!CollisionManager.MouseCollision(mouseX, mouseY, RESOLUTION_PANEL_DATA.x, RESOLUTION_PANEL_DATA.y, RESOLUTION_PANEL_DATA.w, RESOLUTION_PANEL_DATA.h)) {
+                    closeResolutionPanel();
+                }
+            } else if (SETTINGS) {
+                if (!CollisionManager.MouseCollision(mouseX, mouseY, SETTINGS_PANEL_DATA.x, SETTINGS_PANEL_DATA.y, SETTINGS_PANEL_DATA.w, SETTINGS_PANEL_DATA.h)) {
+                    closeSettings();
+                }
+            }
+    
+    
+            let bClickedOnKeyboard = false;
+            // if (MainMenu.state != MainMenu.STATE.Transition && Game1.currentState != Game1.STATE.Transition) {
+                Button.currentList.every(b => {
+                    if (b.getState() != Button.STATE.Inactive) {
+    
+                        if (b.getState() == Button.STATE.Hover) {
+
+                            if (b instanceof CheckboxBtn) {
+                                if (b.bChecked) {
+                                    // b.changeSpriteAnimation("c_down");
+                                } else {
+                                    b.changeSpriteAnimation("down");
+                                }
+                            } else {
+                                b.changeSpriteAnimation("down");
+                            }
+
+                            if (b.id == 1) { // Btn standard
+                                b.textOffsetX += 1;
+                                b.textOffsetY += 1;
+                                b.bTextOffsetChanged = true;
+                            } 
+    
+                            MOUSE_SPRITE.changeAnimation("down");
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+    
+                if (Input.bKeyboardActive) {
+                    Input.keyboardList.every(b => {
+                        if (b.getState() != Button.STATE.Inactive) {
+                            if (b.getState() == Button.STATE.Hover) {
+                                if (b instanceof KeyboardBtn) {
+                                    bClickedOnKeyboard = true;
+                                }
+    
+                                b.textOffsetX += 1;
+                                b.textOffsetY += 1;
+                                b.bTextOffsetChanged = true;
+    
+                                b.changeSpriteAnimation("down");
+                                MOUSE_SPRITE.changeAnimation("down");
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
+                }
+    
+                let bClickedOnAnotherEntryField = false;
+                let newIndex = -1;
+                EntryField.currentList.forEach((e, index) => {
+                    if (e.getState() != EntryField.STATE.Inactive) {
+                        if (CollisionManager.MouseCollision(mouseX, mouseY, e.x, e.y, e.getSize().w, e.getSize().h)) {
+                            if (e.getState() == EntryField.STATE.Hover) {
+                                bClickedOnAnotherEntryField = true;
+                                e.setState(EntryField.STATE.Focus);
+                                e.changeSpriteAnimation("focus");
+                                Sound.play("entry");
+                                e.textOffsetX = e.textOffsetXFocus;
+                                e.textOffsetY = e.textOffsetYFocus;
+                                if (e.focusCB) {
+                                    e.focusCB.cb(e.focusCB.arg);
+                                }
+                                newIndex = index;
+    
+                            }
+                            if (e.getState() == EntryField.STATE.Hover || e.getState() == EntryField.STATE.Focus) {
+                                e.sp.cursor.changeAnimation("normal");
+    
+                                if (mouseX < e.x + e.cursorPosXOrigin) {
+                                    e.sp.cursor.offX = e.cursorPosXOrigin;
+                                }
+                                else if (mouseX > e.x + e.cursorPosXOrigin + e.label.length * 5) {
+                                    e.sp.cursor.offX = e.cursorPosXOrigin + e.label.length * 5
+                                }
+                                else {
+                                    let char = Math.ceil((mouseX - (e.x + e.cursorPosXOrigin)) / 5);
+                                    e.sp.cursor.offX = e.cursorPosXOrigin + char * 5;
+                                }
+                            }
+    
+                        }
+                    }
+                });
+    
+                if (bClickedOnAnotherEntryField) {
+    
+                    EntryField.currentList.forEach((e, index) => {
+                        if (e.getState() == EntryField.STATE.Focus
+                            && !CollisionManager.MouseCollision(mouseX, mouseY, e.x, e.y, e.getSize().w, e.getSize().h)
+                            && !bClickedOnKeyboard) {
+                            e.setState(EntryField.STATE.Normal);
+                            e.changeSpriteAnimation("normal");
+                            e.sp.cursor.changeAnimation("none");
+                            e.textOffsetX = e.textOffsetXOrigin;
+                            e.textOffsetY = e.textOffsetYOrigin;
+    
+                            if (e.focusCB) {
+                                if (newIndex == 0) { //! Index en dur
+                                    Login.bTooltipIncluded = false;
+                                    e.getTooltip().forEach(sp => {
+                                        if (sp instanceof Sprite) {
+                                            sp.delete = true;
+                                            sp.currentFrame = 0;
+                                        } else {
+                                            sp.getSprite().delete = true;
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    });
+                }
+    
+    
+            // }
+        }
+    });
+
     canvas.addEventListener("mousedown", e => {
     
         if (!inTransition() && e.button == 0 && mainState != MAIN_STATE.Error) { // Left click !
@@ -1106,9 +1506,9 @@ if (Input.MOUSE_DOWN) {
                                 b.changeSpriteAnimation("down");
                             }
 
-                            if (b.id == 0) { // Btn standard
-                                b.textOffsetX += 2;
-                                b.textOffsetY += 2;
+                            if (b.id == 1) { // Btn standard
+                                b.textOffsetX += 1;
+                                b.textOffsetY += 1;
                                 b.bTextOffsetChanged = true;
                             } 
     
@@ -1221,19 +1621,79 @@ if (Input.MOUSE_DOWN) {
 //! | (____/\| (____/\___) (___| (____/\|  /  \ \
 //! (_______/(_______/\_______/(_______/|_/    \/
 if (Input.MOUSE_CLICK) {
+    canvas2.onclick = e => {
+        Button.currentList.every(b => {
+            if (b.getState() != Button.STATE.Inactive && !b.bMoving) {
+                if (b.getState() == Button.STATE.Hover) {         
+                    if ((b.getSprite().class == 9 && b.getSprite().tl.currentAnimation.name != "down")
+                        || (b.getSprite().class != 9 && b.getSprite().currentAnimation.name != "down")
+                    ) {
+                        return false;
+                    }
+
+                    if (b.getHoverOffset()) {
+                        let func = translate.bind(b, { x: b.getHoverOffset().x, y: b.getHoverOffset().y }, true);
+                        func();
+                    }
+
+                    if (b.bTextOffsetChanged) b.resetOffsets();
+
+                    if (b.sound != "") {
+                        if (b.id_test != "go") {
+                            Sound.play(b.sound);
+                        } else {
+                            setTimeout(() => {
+                                Sound.play(b.sound);
+                            }, 500);
+                        }
+                    }
+
+                    if (b instanceof CheckboxBtn) {
+                        if (b.bChecked) {
+                            // b.setState(Button.STATE.Normal);
+                        } else {
+                            b.setState(Button.STATE.Normal);
+                            b.changeSpriteAnimation("normal");
+                            b.check();
+                        }
+                    } else {
+                        b.setState(Button.STATE.Normal);
+                        b.changeSpriteAnimation("normal");
+                    }
+                    MOUSE_SPRITE.changeAnimation("normal");
+
+                    if (b.callback.cb != null && b.callback.arg != null) {
+                        b.callback.cb(b.callback.arg);
+                    } else {
+                        b.callback();
+                    }
+                    if (b.hoverCB) {
+                        b.getTooltip().forEach(sp => {
+                            if (sp instanceof Sprite) {
+                                sp.delete = true;
+                            } else {
+                                sp.getSprite().delete = true;
+                            }
+                        });
+                    }
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
     canvas.onclick = e => {
-    
         if (!Sound.bInit) {
             Sound.initAudioContext();
         }
     
         if (!inTransition() && e.button == 0 && mainState != MAIN_STATE.Error) { // Left click !
-            // log("click")
             const mouseX = e.layerX / SCALE_X;
             const mouseY = e.layerY / SCALE_Y;
     
             // if (MainMenu.state != MainMenu.STATE.Transition && Game1.currentState != Game1.STATE.Transition) {
-            if (mainState === MAIN_STATE.Game) {
+            if (mainState === MAIN_STATE.Game) { //! GAME1 ---------------------
 
                 if (Game.bDeckHover) {
                     if (Game.lists["deck"].length > 0) {
@@ -1269,9 +1729,7 @@ if (Input.MOUSE_CLICK) {
                     Game.HSDC_LIST.forEach(HSDC => {
                         if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
                             bCollideHSDC = true;
-                            // log("collide hsdc on click")
                             if (Game.lists[HSDC.type].length > 0) {
-                                // log(Game.getLastOf(HSDC.type))
                                 let card = Game.getLastOf(HSDC.type);
                                 card.bHovering = false;
                                 card.bSelect = true;
@@ -1286,6 +1744,7 @@ if (Input.MOUSE_CLICK) {
 
                         if (Card.multiHover) {
                             Card.multiSelect = true;
+                            yomiText.element.innerHTML = "";
                             Card.multiSelectPos = Card.multiHoverPos;
                             let bFirst = true;
                             Game.lists[Card.multiHoverPos].forEach(c => {
@@ -1306,11 +1765,13 @@ if (Input.MOUSE_CLICK) {
                                     c.bHovering = false;
                                     c.bSelect = true;
                                     Card.selected = c;
-                                    // log(c.name + " " + c.type);
                                     return false;
                                 } else if (c.bHovering && c.state === Card.STATE.FaceDown) {
                                     c.state = Card.STATE.Normal;
                                     c.getSprite().changeAnimation("normal");
+                                    if (MOBILE) {
+                                        c.bHovering = false;
+                                    }
                                 }
                                 return true;
                             });
@@ -1319,49 +1780,109 @@ if (Input.MOUSE_CLICK) {
                     } else {
 
                         if (Game.bDisplayOkPanel) {
-                            // if (CollisionManager.MouseCollision(mouseX, mouseY, Game.OK_PANEL.x, Game.OK_PANEL.y, Game.OK_PANEL.width, Game.OK_PANEL.height)) {
-                                if (Card.multiSelect) {
-                                    let bGo = false;
-                                    let nbToPop = 0;
-                                    Game.lists[Card.multiSelectPos].forEach(c => {
-                                        let card = c.getParent();
-                                        if (card.nameType() === Card.selected.nameType()) {
-                                            // log("to bGo? : " + card.nameType + " " + Card.selected.nameType)
-                                            bGo = true;
-                                        }
-                                        if (bGo) {
-                                            nbToPop++;
-                                            Game.lists[Game.listToGoTo].push(card.getSprite());
-                                            card.bSelect = false;
-                                            card.position = Game.listToGoTo;
-                                        }
-                                    })
-                                    for (let i = 0; i < nbToPop; i++) {
-                                        Game.lists[Card.multiSelectPos].pop();
+                            if (Card.multiSelect) {
+
+                                Card.multiTransition = true;
+
+                                let bGo = false;
+                                let nbToPop = 0;
+                                let count = 0;
+                                let offsetY = 0;
+                                let speed = 0.5;
+                                Game.lists[Card.multiSelectPos].forEach(c => {
+                                    let card = c.getParent();
+                                    if (card.nameType() === Card.selected.nameType()) {
+                                        bGo = true;
+                                    } 
+                                    if (bGo) {
+                                        nbToPop++
+                                        // speed -= 0.01;
                                     }
-                                    Card.selected = null;
-                                    Card.multiSelect = false;
-                                    Card.multiSelectPos = "";
-                                    Game.bDisplayOkPanel = false;
-                                    Game.listToGoTo = "";
-                                    return;
-                                } else {
-                                    Game.lists[Card.selected.position].pop();
-                                    Game.lists[Game.listToGoTo].push(Card.selected.sp);
-                                    Card.selected.position = Game.listToGoTo;
-                                    Card.selected.bSelect = false;
-        
-                                    Game.bDisplayOkPanel = false;
-                                    Card.selected = null;
-                                    Game.listToGoTo = "";
-                                    if (Game.lists["deck"].length === 0 && Game.lists["deck2"].length === 0) {
-                                        Game.DECK.changeAnimation("void");
+                                })
+                                bGo = false;
+
+                                Game.lists[Card.multiSelectPos].forEach(c => {
+                                    let card = c.getParent();
+                                    if (card.nameType() === Card.selected.nameType()) {
+                                        bGo = true;
                                     }
-                                    return;
+                                    if (bGo) {
+                                        count++;
+                                        Card.inTransitionList.push(card);
+                                        card.bMoving = true
+                                        TRANSITION = true;
+
+                                        let newSprite = new Sprite({ w: 48, h: 64 }, card.x, card.y, null, "mc"); //? Moving Card
+                                        newSprite.addAnimation("normal", { x: card.getSprite().getAnimation("normal").origin.x, y: card.getSprite().getAnimation("normal").origin.y });
+                                        newSprite.changeAnimation("normal");
+                                        newSprite.setDestination({ x: Game.OK_PANEL.x, y: Game.OK_PANEL.y + offsetY});
+
+                                        newSprite.setMoveSpeed(speed);
+                                        speed += 0.01;
+                                        Game.movingList.push(newSprite);
+                                        
+                                        if (count === nbToPop) {
+                                            let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
+                                            kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+                                            kanjiSprite.changeAnimation("normal");
+                                            Game.movingList.push(kanjiSprite);
+                                        }
+
+                                        // nbToPop++;
+                                        Game.lists[Game.listToGoTo].push(card.getSprite());
+                                        card.bSelect = false;
+                                        card.position = Game.listToGoTo;
+                                        offsetY += PIXEL_MODE ? 10 : 14;
+                                    }
+                                })
+
+
+
+                                for (let i = 0; i < nbToPop; i++) {
+                                    Game.lists[Card.multiSelectPos].pop();
                                 }
-                            // }
+                                Card.selected = null;
+                                Card.multiSelect = false;
+                                Card.multiSelectPos = "";
+                                Game.bDisplayOkPanel = false;
+                                Game.listToGoTo = "";
+                                return;
+                            } else {
+                                //! HSDCも
+                                yomiText.element.innerHTML = "";
+                                Card.inTransition = Card.selected;
+                                Card.selected.bMoving = true;
+                                TRANSITION = true;
+
+                                let newSprite = new Sprite({ w: 48, h: 64 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
+                                newSprite.addAnimation("normal", { x: Card.selected.getSprite().getAnimation("normal").origin.x, y: Card.selected.getSprite().getAnimation("normal").origin.y });
+                                newSprite.changeAnimation("normal");
+                                newSprite.setDestination({ x: Game.OK_PANEL.x, y: Game.OK_PANEL.y });
+                                newSprite.setMoveSpeed(0.5);
+                                Game.movingList.push(newSprite);
+                                
+                                let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
+                                kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+                                kanjiSprite.changeAnimation("normal");
+                                Game.movingList.push(kanjiSprite);
+
+
+                                Game.lists[Card.selected.position].pop();
+                                Game.lists[Game.listToGoTo].push(Card.selected.sp);
+                                Card.selected.position = Game.listToGoTo;
+                                Card.selected.bSelect = false;
+    
+                                Game.bDisplayOkPanel = false;
+                                Card.selected = null;
+                                Game.listToGoTo = "";
+                                if (Game.lists["deck"].length === 0 && Game.lists["deck2"].length === 0) {
+                                    Game.DECK.changeAnimation("void");
+                                }
+                                return;
+                            }
                         }
     
+                        //? Ici : displayOK = false ==> désactivation de tous les selects
                         let bCollision = false;
                         Card.list.every(c => {
                             if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
@@ -1369,22 +1890,266 @@ if (Input.MOUSE_CLICK) {
                                 if (c.bSelect) {
                                     c.bSelect = false;
                                     Card.selected = null;
-                                    c.bHovering = true;
+                                    if (!MOBILE) c.bHovering = true;
                                 } else {
-    
+                                    Card.multiSelect = false;
+                                    Card.multiSelectPos = "";
+                                    if (Card.selected !== null) Card.selected.bSelect = false;
+                                    Card.selected = null;
+                                    Game.listToGoTo = ""
+                                }
+                            } else {
+                                if (c.bSelect) {
+                                    c.bSelect = false;
                                 }
                             }
                             return true;
                         });
                         if (!bCollision) {
+                            Card.multiSelect = false;
+                            Card.multiSelectPos = "";
                             Card.selected.bSelect = false;
                             Card.selected = null;
                             Game.bDisplayOkPanel = false;
                             Game.listToGoTo = "";
+                            yomiText.element.innerHTML = "";
                         }
                     }
                 }
 
+            } else if (mainState === MAIN_STATE.PixelMode) { //! PixelMode ---------------------
+
+                if (PixelMode.bDeckHover) {
+                    if (PixelMode.lists["deck"].length > 0) {
+                        let cardSprite = PixelMode.lists["deck"][PixelMode.lists["deck"].length-1];
+                        cardSprite.getParent().position = "deck2";
+                        cardSprite.getParent().state = Card.STATE.Normal;
+                        cardSprite.changeAnimation("normal");
+                        PixelMode.lists["deck"].pop();
+                        PixelMode.lists["deck2"].push(cardSprite);
+                    } else {
+                        if (PixelMode.lists["deck2"].length > 0) {
+                            PixelMode.lists["deck2"].forEach(d2 => {
+                                d2.getParent().position = "deck";
+                                d2.getParent().state = Card.STATE.FaceDown;
+                                d2.changeAnimation("faceDown");
+                                PixelMode.lists["deck"].unshift(d2);
+                            });
+                            PixelMode.lists["deck2"] = [];
+                        }
+                    }
+                    return;
+                } else if (PixelMode.bDeck2Hover) {
+                    Card.selected = PixelMode.getLastOf("deck2");
+                    Card.selected.bSelect = true;
+                    Card.selected.bHovering = false;
+
+                    return;
+                }
+
+                //? CHECK HSDC
+                let bCollideHSDC = false;
+                if (Card.selected === null) {
+                    PixelMode.HSDC_LIST.forEach(HSDC => {
+                        if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
+                            bCollideHSDC = true;
+                            if (PixelMode.lists[HSDC.type].length > 0) {
+                                let card = PixelMode.getLastOf(HSDC.type);
+                                card.bHovering = false;
+                                card.bSelect = true;
+                                Card.selected = card;
+                            } 
+                        }
+                    });
+                }
+                
+                if (!bCollideHSDC) {
+                    if (Card.selected === null) {
+
+                        if (Card.multiHover) {
+                            Card.multiSelect = true;
+                            Card.multiSelectPos = Card.multiHoverPos;
+                            let bFirst = true;
+                            PixelMode.lists[Card.multiHoverPos].forEach(c => {
+                                let card = c.getParent();
+                                if (card.bHovering) {
+                                    if (bFirst) {
+                                        bFirst = false;
+                                        Card.selected = card;
+                                    }
+                                    card.bHovering = false;
+                                    card.bSelect = true;
+                                }
+                            });
+                        } else {
+                            Card.list.every(c => {
+                                if (c.bHovering && c.state === Card.STATE.Normal) {
+                                    
+                                    c.bHovering = false;
+                                    c.bSelect = true;
+                                    Card.selected = c;
+                                    return false;
+                                } else if (c.bHovering && c.state === Card.STATE.FaceDown) {
+                                    c.state = Card.STATE.Normal;
+                                    c.getSprite().changeAnimation("normal");
+                                    if (MOBILE) {
+                                        c.bHovering = false;
+                                    }
+                                }
+                                return true;
+                            });
+                        }
+
+                    } else {
+
+                        if (PixelMode.bDisplayOkPanel) {
+                            if (Card.multiSelect) {
+
+                                Card.multiTransition = true;
+
+                                let bGo = false;
+                                let nbToPop = 0;
+                                let count = 0;
+                                let offsetY = 0;
+                                let speed = 0.5;
+                                PixelMode.lists[Card.multiSelectPos].forEach(c => {
+                                    let card = c.getParent();
+                                    if (card.nameType() === Card.selected.nameType()) {
+                                        bGo = true;
+                                    } 
+                                    if (bGo) {
+                                        nbToPop++
+                                        // speed -= 0.01;
+                                    }
+                                })
+                                bGo = false;
+
+                                PixelMode.lists[Card.multiSelectPos].forEach(c => {
+                                    //! do not delete
+                                    // let card = c.getParent();
+                                    // if (card.nameType() === Card.selected.nameType()) {
+                                    //     // log("to bGo? : " + card.nameType + " " + Card.selected.nameType)
+                                    //     bGo = true;
+                                    // }
+                                    // if (bGo) {
+                                    //     nbToPop++;
+                                    //     PixelMode.lists[PixelMode.listToGoTo].push(card.getSprite());
+                                    //     card.bSelect = false;
+                                    //     card.position = PixelMode.listToGoTo;
+                                    // }
+                                    //! do not delete
+
+                                    let card = c.getParent();
+                                    if (card.nameType() === Card.selected.nameType()) {
+                                        bGo = true;
+                                    }
+                                    if (bGo) {
+                                        count++;
+                                        Card.inTransitionList.push(card);
+                                        card.bMoving = true
+                                        TRANSITION = true;
+
+                                        let newSprite = new Sprite({ w: 24, h: 32 }, card.x, card.y, null, "mc"); //? Moving Card
+                                        newSprite.addAnimation("normal", { x: card.getSprite().getAnimation("normal").origin.x, y: card.getSprite().getAnimation("normal").origin.y });
+                                        newSprite.changeAnimation("normal");
+                                        newSprite.setDestination({ x: PixelMode.OK_PANEL.x, y: PixelMode.OK_PANEL.y + offsetY});
+
+                                        newSprite.setMoveSpeed(speed);
+                                        speed += 0.01;
+                                        PixelMode.movingList.push(newSprite);
+                                        
+                                        // if (count === nbToPop) {
+                                        //     let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
+                                        //     kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+                                        //     kanjiSprite.changeAnimation("normal");
+                                        //     PixelMode.movingList.push(kanjiSprite);
+                                        // }
+
+                                        // nbToPop++;
+                                        PixelMode.lists[PixelMode.listToGoTo].push(card.getSprite());
+                                        card.bSelect = false;
+                                        card.position = PixelMode.listToGoTo;
+                                        offsetY += PIXEL_MODE ? 10 : 14;
+                                    }
+                                })
+
+
+
+                                for (let i = 0; i < nbToPop; i++) {
+                                    PixelMode.lists[Card.multiSelectPos].pop();
+                                }
+                                Card.selected = null;
+                                Card.multiSelect = false;
+                                Card.multiSelectPos = "";
+                                PixelMode.bDisplayOkPanel = false;
+                                PixelMode.listToGoTo = "";
+                                return;
+                            } else {
+
+                                Card.inTransition = Card.selected;
+                                TRANSITION = true;
+
+                                let newSprite = new Sprite({ w: 24, h: 32 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
+                                newSprite.addAnimation("normal", { x: Card.selected.getSprite().getAnimation("normal").origin.x, y: Card.selected.getSprite().getAnimation("normal").origin.y });
+                                newSprite.changeAnimation("normal");
+                                newSprite.setDestination({ x: PixelMode.OK_PANEL.x, y: PixelMode.OK_PANEL.y });
+                                newSprite.setMoveSpeed(0.5);
+                                PixelMode.movingList.push(newSprite);
+                                Card.selected.bMoving = true;
+                                
+                                // let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
+                                // kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+                                // kanjiSprite.changeAnimation("normal");
+                                // Game.movingList.push(kanjiSprite);
+
+                                PixelMode.lists[Card.selected.position].pop();
+                                PixelMode.lists[PixelMode.listToGoTo].push(Card.selected.sp);
+                                Card.selected.position = PixelMode.listToGoTo;
+                                Card.selected.bSelect = false;
+    
+                                PixelMode.bDisplayOkPanel = false;
+                                Card.selected = null;
+                                PixelMode.listToGoTo = "";
+                                if (PixelMode.lists["deck"].length === 0 && PixelMode.lists["deck2"].length === 0) {
+                                    PixelMode.DECK.changeAnimation("void");
+                                }
+                                return;
+                            }
+                        }
+    
+                        //? Ici : displayOK = false ==> désactivation de tous les selects
+                        let bCollision = false;
+                        Card.list.every(c => {
+                            if (CollisionManager.MouseCollision(mouseX, mouseY, c.x, c.y, c.width, c.height)) {
+                                bCollision = true;
+                                if (c.bSelect) {
+                                    c.bSelect = false;
+                                    Card.selected = null;
+                                    if (!MOBILE) c.bHovering = true;
+                                } else {
+                                    Card.multiSelect = false;
+                                    Card.multiSelectPos = "";
+                                    if (Card.selected !== null) Card.selected.bSelect = false;
+                                    Card.selected = null;
+                                    PixelMode.listToGoTo = ""
+                                }
+                            } else {
+                                if (c.bSelect) {
+                                    c.bSelect = false;
+                                }
+                            }
+                            return true;
+                        });
+                        if (!bCollision) {
+                            Card.multiSelect = false;
+                            Card.multiSelectPos = "";
+                            Card.selected.bSelect = false;
+                            Card.selected = null;
+                            PixelMode.bDisplayOkPanel = false;
+                            PixelMode.listToGoTo = "";
+                        }
+                    }
+                }
             }
 
                 Button.currentList.every(b => {
@@ -1443,6 +2208,8 @@ if (Input.MOUSE_CLICK) {
                                 });
                             }
                             return false;
+                        } else {
+                            if (b.bTextOffsetChanged) b.resetOffsets();
                         }
                     }
                     return true;

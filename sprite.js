@@ -36,6 +36,13 @@ class Sprite {
         this.scaleX = pScale.x;
         this.scaleY = pScale.y;
 
+        this.sx = 0;
+        this.sy = 0;
+
+        //? For Ending animation. We want the parent ref
+        this.cardParent = "";
+
+
         this.currentFrame = 0;
         this.currentAnimation = null;
         this.timer = new Timer(0, this.updateFrame.bind(this));
@@ -366,28 +373,57 @@ class Sprite {
             } else {
                 this.delete = true;
             }
-        } else if (this.type == "g") { //? Game1 : Start
+        } else if (this.type == "mc") { //? Moving Card
 
             if (this.speedCount <= this.moveSpeed) {
                 if (this.direction == 1) {
-                    this.y = easeOutSin(this.speedCount, this.startPos.y, this.destination.y - this.startPos.y, this.moveSpeed);
-                } else {
+                    this.x = easeOutSin(this.speedCount, this.startPos.x, this.destination.x - this.startPos.x, this.moveSpeed);
                     this.y = easeOutSin(this.speedCount, this.startPos.y, this.destination.y - this.startPos.y, this.moveSpeed);
                 }
                 this.speedCount += dt;
-
             } else {
-                this.startPos.x = this.x;
-                this.startPos.y = this.y;
-                this.setDestination({ x: this.x, y: -50 });
-                this.speedCount = 0;
-                this.moveSpeed = 0.5;
-                if (this.direction == 1) {
-                    this.direction = -1;
+                this.bMoving = false;                
+                this.x = this.destination.x;
+                this.y = this.destination.y;
+                this.delete = true;
+
+                if (!Card.multiTransition) {
+                    Card.inTransition.bMoving = false;
+                    Card.inTransition = null;
+                    TRANSITION = false;
+                    if (mainState === MAIN_STATE.PixelMode)
+                    PixelMode.checkEnd();
                 } else {
-                    this.delete = true;
+                    Card.inTransitionList[0].bMoving = false;
+                    Card.inTransitionList.shift();
+                    if (Card.inTransitionList.length === 0) {
+                        Card.multiTransition = false;
+                        TRANSITION = false;
+                    }
                 }
             }
+        } else if (this.type === "mcc") {
+            if (this.parent.delete) {
+                this.delete = true;
+                if (mainState === MAIN_STATE.Game) { //!    && KANJI / HANZI version
+                    Game.checkEnd();
+                }
+            }
+        } else if (this.type === "end") {
+            this.x += this.sx;
+            this.y += this.sy;
+            this.sy += 0.1;
+            if (this.y + this.height > CANVAS_HEIGHT) {
+                this.y = CANVAS_HEIGHT - this.height;
+                this.sy -= 2.15 //! rendre un peu aléatoire ici
+                this.sy = -this.sy;
+                if (this.sy > 0) {this.sy = -0.5}
+            }
+            if (this.x + this.width < 0 || this.x > CANVAS_WIDTH) {
+                this.delete = true;
+            }
+        } else if (this.type === "endc") {
+            if (this.parent.delete) this.delete = true;
         }
 
         if (this.bFading) {
@@ -563,12 +599,41 @@ class Sprite {
                         sp.getParent().drawLabel(ctx);
                     }
                 } else {
-
                     // if (sp.type == "c" && (sp.getParent().position == "deck")) {
                         // sp.getParent().x = Card.POSITIONS[sp.getParent().position].x;
                         // sp.getParent().y = Card.POSITIONS[sp.getParent().position].y;
                     // }
                     sp.draw(ctx);
+                    if (Card.inTransition !== null) {
+                        if (sp.type === "mcc") {
+                            ctx.font = 24 + "px " + "kyokasho";
+                            if (Card.inTransition.type === "♥" || Card.inTransition.type === "♦") {
+                                text(ctx, Card.inTransition.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40, RED_COLOR);
+                            } else {
+                                text(ctx, Card.inTransition.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40);
+                            }
+                        }
+                        // ctx.font = 24 + "px " + "kyokasho";
+                    } else if (Card.multiTransition) {
+                        if (sp.type === "mcc" && !PIXEL_MODE) {
+                            ctx.font = 24 + "px " + "kyokasho";
+                            if (Card.inTransitionList[Card.inTransitionList.length-1].type === "♥" || Card.inTransitionList[Card.inTransitionList.length-1].type === "♦") {
+                                text(ctx, Card.inTransitionList[Card.inTransitionList.length-1].kanji.kanji, sp.parent.x + 12, sp.parent.y + 40, RED_COLOR);
+                            } else {
+                                text(ctx, Card.inTransitionList[Card.inTransitionList.length-1].kanji.kanji, sp.parent.x + 12, sp.parent.y + 40);
+                            }
+                        }
+                    }
+                    if (Game.currentState === Game.STATE.Ending) {
+                        if (sp.type === "endc") {
+                            ctx.font = 24 + "px " + "kyokasho";
+                            if (sp.parentCard.type === "♥" || sp.parentCard.type === "♦") {
+                                text(ctx, sp.parentCard.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40, RED_COLOR);
+                            } else {
+                                text(ctx, sp.parentCard.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40);
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -585,23 +650,82 @@ class Sprite {
         */
         if (pPosition.type <= 5) {
             if (pList.length > 0) {
-                // log("pList.length > 0");
-                let lastPos = pList.length-1
-                pList[lastPos].getParent().x = pPosition.x;
-                pList[lastPos].getParent().y = pPosition.y;
-                pList[lastPos].draw(ctx);
+                let lastPos = pList.length-1;
+                let card = pList[lastPos].getParent(); //! LAST CARD in list
+                if (card.bMoving && pList.length > 1) {
+                    lastPos--; 
+                    card = pList[lastPos].getParent();
+                }
+                card.x = pPosition.x;
+                card.y = pPosition.y;
+                if (!card.bMoving) {
+                    if (card.bHovering || card.bSelect) card.y--;
+
+                    if (card.position === "deck2" && ((mainState === MAIN_STATE.Game && Game.bDeck2Hover) || (mainState === MAIN_STATE.PixelMode && PixelMode.bDeck2Hover))) {
+                        if (card.y == pPosition.y) card.y--;
+                    }
+                    pList[lastPos].draw(ctx);
+                }
+
+                if (mainState === MAIN_STATE.Game) { //? Affichage KanjiCard
+                    if (card.state !== Card.STATE.FaceDown && !card.bMoving) {
+                        Game.kanjiBG.x = card.x+1;
+                        Game.kanjiBG.y = card.y+13;
+                        Game.kanjiBG.draw(ctx);
+                        ctx.font = 24 + "px " + "kyokasho";
+                        if (card.type === "♥" || card.type === "♦") {
+                            text(ctx, card.kanji.kanji, card.x+12, card.y+40, RED_COLOR);
+                        } else {
+                            text(ctx, card.kanji.kanji, card.x+12, card.y+40);
+                        }
+                    }
+                }
 
                 let sp = null;
-                if (pList[lastPos].getParent().bHovering) {
-                    // console.log(pList[lastPos].getParent().name + pList[lastPos].getParent().type);
-                    Game.hoverPanel.x = pList[lastPos].getParent().x;
-                    Game.hoverPanel.y = pList[lastPos].getParent().y;
-                    sp = Game.hoverPanel.getSprite();
-                } else if (pList[lastPos].getParent().bSelect) {
-                    Game.selectPanel.x = pList[lastPos].getParent().x;
-                    Game.selectPanel.y = pList[lastPos].getParent().y;
-                    sp = Game.selectPanel.getSprite();
+
+                if (PIXEL_MODE) {
+                    
+                    if (card.bHovering) {
+                        PixelMode.hoverPanel.x = card.x;
+                        PixelMode.hoverPanel.y = card.y;
+                        sp = PixelMode.hoverPanel.getSprite();
+                    } else if (card.bSelect) {
+                        PixelMode.selectPanel.x = card.x;
+                        PixelMode.selectPanel.y = card.y;
+                        // sp = PixelMode.selectPanel.getSprite();
+                        PixelMode.selectPanel.draw(ctx);
+                    }
+
+                } else {
+                    if (card.bHovering) { //? HSDC
+                        Game.hoverPanel.x = card.x;
+                        Game.hoverPanel.y = card.y;
+                        sp = Game.hoverPanel.getSprite();
+                        if (!MOBILE) {
+                            if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
+                                let innerHTML = card.kanji.yomi + "<br/>";
+                                card.kanji.exList.forEach(t => {
+                                    innerHTML += t + "<br/>"
+                                });
+                                yomiText.element.innerHTML = innerHTML;
+                            }
+                        }
+
+                    } else if (card.bSelect) {
+                        Game.selectPanel.x = card.x;
+                        Game.selectPanel.y = card.y;
+                        Game.selectPanel.draw(ctx);
+
+                        if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
+                            let innerHTML = card.kanji.yomi + "<br/>";
+                            card.kanji.exList.forEach(t => {
+                                innerHTML += t + "<br/>"
+                            });
+                            yomiText.element.innerHTML = innerHTML;
+                        }
+                    }
                 }
+
                 if (sp != null) {
                     for (const s in sp) {
                         if (sp[s] instanceof Sprite) {
@@ -619,27 +743,79 @@ class Sprite {
             }
         } else {
             let y = 104;
-            if (mainState === MAIN_STATE.Game2) y = 48;
+            if (mainState === MAIN_STATE.PixelMode) y = 48;
 
             for (let i = 0; i < pList.length; i++) {
-                pList[i].getParent().x = pPosition.x;
-                pList[i].getParent().y = y;
-                pList[i].draw(ctx);
+                let card = pList[i].getParent();
+                card.x = pPosition.x;
+                card.y = y;
+                if (card.bHovering || card.bSelect) {
+                    card.y--;
+                }
+                if (!card.bMoving) {
+                    pList[i].draw(ctx);
+                }
+
                 if (mainState === MAIN_STATE.Game) {
                     y+=14;
                 } else {
                     y+= 10;
                 }
                 
+                if (mainState === MAIN_STATE.Game) { //? Affichage KanjiCard
+                    if (card.state !== Card.STATE.FaceDown && !card.bMoving) {
+                        Game.kanjiBG.x = card.x+1;
+                        Game.kanjiBG.y = card.y+13;
+                        Game.kanjiBG.draw(ctx);
+                        ctx.font = 24 + "px " + "kyokasho";
+                        if (card.type === "♥" || card.type === "♦") {
+                            text(ctx, card.kanji.kanji, card.x+12, card.y+40, RED_COLOR);
+                        } else {
+                            text(ctx, card.kanji.kanji, card.x+12, card.y+40);
+                        }
+                    }
+                }
+                
                 let sp = null;
-                if (pList[i].getParent().bHovering) {
-                    Game.hoverPanel.x = pList[i].getParent().x;
-                    Game.hoverPanel.y = pList[i].getParent().y;
-                    sp = Game.hoverPanel.getSprite();
-                } else if (pList[i].getParent().bSelect) {
-                    Game.selectPanel.x = pList[i].getParent().x;
-                    Game.selectPanel.y = pList[i].getParent().y;
-                    sp = Game.selectPanel.getSprite();
+                if (PIXEL_MODE) {
+                    if (card.bHovering) {
+                        // if (card.bHovering && !MOBILE) {
+                        PixelMode.hoverPanel.x = card.x;
+                        PixelMode.hoverPanel.y = card.y;
+                        sp = PixelMode.hoverPanel.getSprite();
+                    } else if (card.bSelect) {
+                        PixelMode.selectPanel.x = card.x;
+                        PixelMode.selectPanel.y = card.y;
+                        PixelMode.selectPanel.draw(ctx);
+                    }
+                } else {
+                    if (card.bHovering) {
+                    // if (card.bHovering && !MOBILE) {
+                        Game.hoverPanel.x = card.x;
+                        Game.hoverPanel.y = card.y;
+                        sp = Game.hoverPanel.getSprite();
+                        if (card.state !== Card.STATE.FaceDown) {
+                            if (!MOBILE && !Card.multiHover && !Card.multiSelect) {
+                                let innerHTML = card.kanji.yomi + "<br/>";
+                                card.kanji.exList.forEach(t => {
+                                    innerHTML += t + "<br/>"
+                                });
+                                yomiText.element.innerHTML = innerHTML;
+                            }
+                        }
+
+                    } else if (card.bSelect) {
+                        Game.selectPanel.x = card.x;
+                        Game.selectPanel.y = card.y;
+                        Game.selectPanel.draw(ctx);
+                        if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
+                            let innerHTML = card.kanji.yomi + "<br/>";
+                            card.kanji.exList.forEach(t => {
+                                innerHTML += t + "<br/>"
+                            });
+                            yomiText.element.innerHTML = innerHTML;
+                        }
+                    }
                 }
 
                 if (sp != null) {
@@ -668,7 +844,9 @@ class Sprite {
                 this.ox += this.offsetSS + (this.currentFrame * 2);
             }
             // this.ox = this.currentAnimation.origin.x + (11 * this.currentFrame);
-
+            if (this.id_test === 28) {
+                // log(this.getParent().infos() + ": " + this.scaleX + " " + this.scaleY + " " + this.width + " " + this.height);
+            }
             if (this.parent) {
                 ctx.globalAlpha = this.parent.alpha;
                 ctx.drawImage(SS, this.ox, this.currentAnimation.origin.y, this.width, this.height, this.parent.x + this.offX, this.parent.y + this.offY, this.width * this.scaleX, this.height * this.scaleY);

@@ -4,14 +4,19 @@ canvas.style.textRendering = "optimizeSpeed";
 canvas.style.letterSpacing = 0;
 let ctx0 = canvas.getContext("2d", {willReadFrequently: true});
 const ctx = canvas.getContext("2d");
-/* ?? Test Pixel Rotation
 let canvas2 = document.getElementById("canvas2");
-let ctx2 = canvas2.getContext("2d");
 canvas2.style.fontKerning = "none";
 canvas2.style.textRendering = "optimizeSpeed";
 canvas2.style.letterSpacing = 0;
-let angleTest = 0;
-*/
+const ctx2 = canvas2.getContext("2d");
+
+let yomiText = {
+    element: document.getElementById("yomi"),
+    x: 0,
+    y: 0,
+    size: 30,
+    maxWidth: 300
+}
 
 let checkAssetsInterval = setInterval(checkAssetsLoading, 1000 / 60);
 let interval;
@@ -27,7 +32,8 @@ if (BROWSER.includes("Firefox")) {
 }
 
 let MOBILE = false;
-const TEST_MODE = 0;
+let PIXEL_MODE = 0
+let FRAME_BY_FRAME = false;
 
 const SCALE = Object.freeze({
     STATE_1: 1, //? 450x300
@@ -62,29 +68,24 @@ let windowWidth = window.innerWidth;
 
 if (windowWidth < 900) {
     currentScale = SCALE.STATE_1;
-    if (TEST_MODE) currentScale = SCALE.STATE_2
+    if (PIXEL_MODE) currentScale = SCALE.STATE_2
     MOBILE = true;
-} else if (windowWidth < 1350) {
-    currentScale = SCALE.STATE_2;
-    if (TEST_MODE) currentScale = SCALE.STATE_4
-} else if (windowWidth <= 1920) {
-    currentScale = SCALE.STATE_3;
-    if (TEST_MODE) currentScale = SCALE.STATE_4
-} else if (windowWidth < 2250) {
-    currentScale = SCALE.STATE_4;
-} else if (windowWidth < 2700) {
-    currentScale = SCALE.STATE_5;
-} else if (windowWidth < 3150) {
-    currentScale = SCALE.STATE_6;
+    yomiText.x = 5;
+    yomiText.y = 325;
+    yomiText.size = 14;
 } else {
-    currentScale = SCALE.STATE_7;
+    currentScale = SCALE.STATE_2;
+    yomiText.x = 10;
+    yomiText.y = 650;
+    yomiText.size = 22;
+    if (PIXEL_MODE) currentScale = SCALE.STATE_4
 }
 
 let SCALE_X = currentScale;
 let SCALE_Y = currentScale;
 
-if (TEST_MODE) {
-    if (SCALE_X ===4) {
+if (PIXEL_MODE) {
+    if (SCALE_X === 4) {
         canvas.width = scaleList[currentScale-2].width;
         canvas.height = scaleList[currentScale-2].height;
     } else {
@@ -95,14 +96,20 @@ if (TEST_MODE) {
     canvas.width = scaleList[currentScale].width;
     canvas.height = scaleList[currentScale].height;
 }
-console.log("scaleX : " + SCALE_X)
-console.log("current scale : " + currentScale)
-console.log("canvas.width: " + canvas.width)
+canvas2.width = canvas.width;
+canvas2.height = canvas.height;
+
+//? scale 1 : 
+//? scale 2 : 10 650
+
+yomiText.element.style.fontSize = yomiText.size + "px";
+yomiText.element.style.left = "" + (canvas.offsetLeft + yomiText.x)+ "px";
+yomiText.element.style.top = "" + yomiText.y + "px";
+yomiText.element.style.maxWidth = canvas.width+"px";
 
 
 let CANVAS_WIDTH = canvas.width / SCALE_X; //? 188!!!!
 let CANVAS_HEIGHT = canvas.height / SCALE_Y;
-console.log("CANVAS_WIDTH: "+CANVAS_WIDTH)
 let FULLSCREEN = false;
 // let CANVAS_SIZE
 // canvas.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
@@ -127,12 +134,7 @@ const RED_SCREENSHAKE_COLOR = "rgba(255,50,50,1)";
 const TEST_BTN_SDW_COLOR = "rgba(228,223,192,1)";
 const TEST_BTN_HVR_COLOR = "rgba(172,50,50,1)";
 
-const LESSON_BTN_SDW_COLOR = "rgba(176,150,124,1)";
-const LESSON_BTN_SDW_COLOR_0 = "rgba(176,150,124,0)";
-const LESSON_BTN_HVR_SDW_COLOR = "rgba(213,210,190,1)";
-const LESSON_BTN_HVR_SDW_COLOR_0 = "rgba(213,210,190,0)";
-const LESSON_BTN_HOVER_COLOR = "rgba(162,138,114,1)";
-const LESSON_BTN_HOVER_COLOR_0 = "rgba(162,138,114,0)";
+const CARD_BTN_SDW_COLOR = "rgba(29,122,66,1)";
 
 const ENTRYFIELD_SDW_COLOR_0 = "rgba(200,200,200,0)";
 const ENTRYFIELD_HVR_SDW_COLOR_0 = "rgba(100,100,100,0)";
@@ -199,24 +201,7 @@ MOUSE_SPRITE.addAnimation("down", { x: 134, y: 34 });
 MOUSE_SPRITE.addAnimation("entry", { x: 144, y: 34 });
 MOUSE_SPRITE.addAnimation("error", { x: 154, y: 34 });
 MOUSE_SPRITE.changeAnimation("normal");
-//TODO 
-//! Move these 
-const SERVER_URL = "http://localhost:3000/test";
-// const SERVER_URL = "https://kanaworld.herokuapp.com/test";
-let bAlreadyExists = false;
-let bEntryError = false;
-let bIncorrectCredentials = false;
-let messageTimeOut = null;
-let USER = {
-    id: -1,
-    name: "",
-    saveData: "",
-    token: ""
-}
-//! --------------
 
-
-//TODO Check Safari : innerWidth
 
 /**
  * DEBUG
@@ -238,16 +223,16 @@ const MAIN_STATE = Object.freeze({
     Splash: 1,
     MainScreen: 2,
     Game: 3,
-    Game2: 4,
+    PixelMode: 4,
     Transition: 5,
 })
 
 let mainState = 3;
 if (shortcut_tomainmenu) {
-    mainState = MAIN_STATE.Menu;
+    mainState = MAIN_STATE.Menu;     
 } else {
-    if (TEST_MODE) {
-        mainState = MAIN_STATE.Game2;
+    if (PIXEL_MODE) {
+        mainState = MAIN_STATE.PixelMode;
     } else {
         mainState = MAIN_STATE.Game;
     }
@@ -271,6 +256,9 @@ function init() {
     ctx.imageSmoothingEnabled = false;
     ctx.msImageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.msImageSmoothingEnabled = false;
+    ctx2.webkitImageSmoothingEnabled = false;
     // ctx.mozImageSmoothingEnabled = false;
 
     // ARROWS = new Sprite({w: 450, h: 300}, 0, 0, null);
@@ -278,6 +266,9 @@ function init() {
     // ARROWS.changeAnimation("normal");
     // MAIN_SPRITE_LIST.push(ARROWS.getSprite());
 
+    Tango.init();
+    Kanji.init();
+    log(Kanji.list);
 
     if (shortcut_tomainmenu) {
         MainMenu.init();
@@ -289,14 +280,13 @@ function init() {
         if (mainState === MAIN_STATE.Game) {
             Game.init();
         } else {
-            Game2.init();
+            PixelMode.init();
         }
     }
 
-
-
+    
     //! interval = setInterval(run, 1000 / 60);
-
+    
     requestAnimationFrame(run);
 }
 
@@ -528,6 +518,7 @@ function showUserAgent(pArg) {
 
 function run(pTime) { //? Time est envoyé automatiquement par "requestAnimationFrame"
     requestAnimationFrame(run);
+    if (debug_STOP && FRAME_BY_FRAME) return;
 
     //! let now = Date.now();
     //! let dt = (now - lastUpdate) / 1000;
@@ -557,8 +548,8 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
         case MAIN_STATE.Game:
             Game.update(dt);
             break;
-        case MAIN_STATE.Game2:
-            Game2.update(dt);
+        case MAIN_STATE.PixelMode:
+            PixelMode.update(dt);
             break;
     }
     if (SAVING) SAVING_SPRITE.update(dt);
@@ -590,9 +581,19 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
         }
     }
 
+    //! ------------------- DRAW -------------------
     Sprite.debug_drawcalls = 0;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (Game.currentState === Game.STATE.Ending || PixelMode.currentState === PixelMode.STATE.Ending) {
+        ctx2.clearRect(0,0,canvas2.width, canvas2.height);
+        ctx2.save();
+        ctx2.scale(SCALE_X, SCALE_Y)
+    }
+
+    if (Game.currentState !== Game.STATE.Ending && PixelMode.currentState !== PixelMode.STATE.Ending) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
     ctx.save();
     ctx.scale(SCALE_X, SCALE_Y);
 
@@ -614,8 +615,8 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
         case MAIN_STATE.Game:
             Game.draw(ctx);
             break; 
-        case MAIN_STATE.Game2:
-            Game2.draw(ctx);
+        case MAIN_STATE.PixelMode:
+            PixelMode.draw(ctx);
             break; 
     }
 
@@ -634,15 +635,27 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
         // ctx.fillText("card: " + debugCard.name + debugCard.type, 0, 200 + offset);
         // ctx.fillText("hover: " + debugCard.bHovering, 0, 210 + offset);
         // ctx.fillText("select: " + debugCard.bSelect, 0, 220 + offset);
+        if (Card.inTransition !== null) {
+            ctx.fillText("CARD transition: " + Card.inTransition.name + Card.inTransition.type, 0, 220 + offset);
+        }
         if (Card.selected != null) {
-            // ctx.fillText("CARD SELECT: " + Card.selected.name + Card.selected.type, 0, 230 + offset);
-            // ctx.fillText("CARD list to go : " + Game.listToGoTo, 0, 240 + offset);
+            ctx.fillText("CARD SELECT: " + Card.selected.name + Card.selected.type, 0, 230 + offset);
+            ctx.fillText("CARD list to go : " + Game.listToGoTo, 0, 240 + offset);
             
         }
-        // ctx.fillText("CARD multiHover : " + Card.multiHover, 0, 250 + offset);
-        // ctx.fillText("CARD multiSelect : " + Card.multiSelect, 0, 260 + offset);
-        // ctx.fillText("CARD multiHoverPos : " + Card.multiHoverPos, 0, 270 + offset);
-        // ctx.fillText("CARD multiSelectPos : " + Card.multiSelectPos, 0, 280 + offset);
+        ctx.fillText("CARD multiHover : " + Card.multiHover, 0, 250 + offset);
+        ctx.fillText("CARD multiSelect : " + Card.multiSelect, 0, 260 + offset);
+        ctx.fillText("CARD multiHoverPos : " + Card.multiHoverPos, 0, 270 + offset);
+        ctx.fillText("CARD multiSelectPos : " + Card.multiSelectPos, 0, 280 + offset);
+        ctx.fillText("CARD multiTransition : " + Card.multiTransition, 0, 290 + offset);
+        ctx.fillText("CARD inTransitionList : " + Card.inTransitionList.length, 0, 300 + offset);
+        ctx.fillText("CARD MovingList : " + Game.movingList.length, 0, 310 + offset);
+        
+
+
+        // let CardQS = Card.getCard("Q♠");
+        // ctx.fillText("Q♠ Hover: " + CardQS.bHovering, 0, 290 + offset);
+
     }
 
     if (bStatsDebug) {
@@ -665,8 +678,13 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
             Sprite.manageBeforeDrawing(MAIN_SPRITE_LIST);
         }
         if (!MOBILE) {
-            MOUSE_SPRITE.ox = MOUSE_SPRITE.currentAnimation.origin.x + (MOUSE_SPRITE.width * MOUSE_SPRITE.currentFrame);
-            ctx.drawImage(SS, MOUSE_SPRITE.ox, MOUSE_SPRITE.currentAnimation.origin.y, MOUSE_SPRITE.width, MOUSE_SPRITE.height, Math.floor(MOUSE_SPRITE.x), Math.floor(MOUSE_SPRITE.y), MOUSE_SPRITE.width * MOUSE_SPRITE.scaleX, MOUSE_SPRITE.height * MOUSE_SPRITE.scaleY);
+            if (Game.currentState === Game.STATE.Ending || PixelMode.currentState === PixelMode.STATE.Ending) {
+                MOUSE_SPRITE.ox = MOUSE_SPRITE.currentAnimation.origin.x + (MOUSE_SPRITE.width * MOUSE_SPRITE.currentFrame);
+                ctx2.drawImage(SS, MOUSE_SPRITE.ox, MOUSE_SPRITE.currentAnimation.origin.y, MOUSE_SPRITE.width, MOUSE_SPRITE.height, Math.floor(MOUSE_SPRITE.x), Math.floor(MOUSE_SPRITE.y), MOUSE_SPRITE.width * MOUSE_SPRITE.scaleX, MOUSE_SPRITE.height * MOUSE_SPRITE.scaleY);
+            } else if (!Game.bStopDrawMouse && !PixelMode.bStopDrawMouse) {
+                MOUSE_SPRITE.ox = MOUSE_SPRITE.currentAnimation.origin.x + (MOUSE_SPRITE.width * MOUSE_SPRITE.currentFrame);
+                ctx.drawImage(SS, MOUSE_SPRITE.ox, MOUSE_SPRITE.currentAnimation.origin.y, MOUSE_SPRITE.width, MOUSE_SPRITE.height, Math.floor(MOUSE_SPRITE.x), Math.floor(MOUSE_SPRITE.y), MOUSE_SPRITE.width * MOUSE_SPRITE.scaleX, MOUSE_SPRITE.height * MOUSE_SPRITE.scaleY);
+            }
         }
     }
 
@@ -679,6 +697,29 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
     }
 
     ctx.restore();
+
+    if (Game.currentState === Game.STATE.Ending || PixelMode.currentState === PixelMode.STATE.Ending) {
+        ctx2.restore();
+    }
+
+    //? TEST
+    // ctx2.imageSmoothingEnabled = true;
+    // ctx2.msImageSmoothingEnabled = true;
+    // ctx2.webkitImageSmoothingEnabled = true;
+    // ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+    // ctx2.save();
+    // ctx2.scale(1, 1);
+
+    // ctx2.fillStyle = BLACK_COLOR;
+    // ctx2.font = "50px kyokasho";
+    // ctx2.fillText("TEST: " + "漢字", 0, 500);
+
+    // ctx2.restore();
+
+    if (debug_STOP) {
+        FRAME_BY_FRAME = true;
+    };
+
 }
 
 function changeMainState(pNewState) {
@@ -693,8 +734,60 @@ function changeMainState(pNewState) {
         case MAIN_STATE.Game:
             Game.init();
             break;
-        case MAIN_STATE.Game2:
-            Game2.init();
+        case MAIN_STATE.PixelMode:
+            // PixelMode.init();
             break;
     }
+}
+
+function changeMode(pMode) {
+    PIXEL_MODE = PIXEL_MODE === 0 ? 1 : 0
+    if (windowWidth < 900) {
+        currentScale = SCALE.STATE_1;
+        if (PIXEL_MODE) currentScale = SCALE.STATE_2
+        MOBILE = true;
+    } else {
+        currentScale = SCALE.STATE_2;
+        if (PIXEL_MODE) currentScale = SCALE.STATE_4
+    }
+
+    SCALE_X = currentScale;
+    SCALE_Y = currentScale;
+
+    if (PIXEL_MODE) {
+        if (SCALE_X === 4) {
+            canvas.width = scaleList[currentScale-2].width;
+            canvas.height = scaleList[currentScale-2].height;
+        } else {
+            canvas.width = scaleList[currentScale-1].width;
+            canvas.height = scaleList[currentScale-1].height;
+        }
+    } else {
+        canvas.width = scaleList[currentScale].width;
+        canvas.height = scaleList[currentScale].height;
+    }
+    canvas2.width = canvas.width;
+    canvas2.height = canvas.height;
+
+    CANVAS_WIDTH = canvas.width / SCALE_X; //? 188!!!!
+    CANVAS_HEIGHT = canvas.height / SCALE_Y;
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.msImageSmoothingEnabled = false;
+    ctx2.webkitImageSmoothingEnabled = false;
+
+    if (PIXEL_MODE) {
+        changeMainState(MAIN_STATE.PixelMode);
+        Card.initCardList();
+        PixelMode.init();
+    } else {
+        changeMainState(MAIN_STATE.Game);
+        Card.initCardList();
+        Game.init();
+    }
+    
 }
