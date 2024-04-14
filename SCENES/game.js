@@ -7,6 +7,8 @@ class Game {
 
     static currentState = Game.STATE.Main;
     static list = [];
+
+    static menuList = [];
     
     static cardList = [];
     static lists = [];
@@ -89,6 +91,11 @@ class Game {
         changeModeBtn.setTextCenterY();
         Game.list.push(changeModeBtn.getSprite());
 
+        let openMenuBtn = new Button({ w: 60, h: 24, v: 7}, 310, 2, null, { cb: Game.openMenu, arg: ""}, "Game", Game.STATE.Main, "MENU", 1); //? 1 : btn style CARD
+        openMenuBtn.setFreeLabel();
+        openMenuBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        openMenuBtn.setTextCenterY();
+        Game.list.push(openMenuBtn.getSprite());
 
         // let endingBtn = new Button({ w: 60, h: 24, v: 7}, 300, 420, null, { cb: Game.end, arg: ""}, "Game", Game.STATE.Main, "END", 1); //? 1 : btn style CARD
         // endingBtn.setFreeLabel();
@@ -297,12 +304,107 @@ class Game {
         //     c.position = c.type;
         //     Game.lists[c.position].push(c.getSprite()); 
         // });
-        // Game.lists["c1"].push(Game.lists["♥"].pop());
-        // Game.lists["c1"][0].parent.position = "c1";
+        // Game.lists["c4"].push(Game.lists["♥"].pop());
+        // Game.lists["c4"][0].parent.position = "c4";
         //! -----------------
 
         Button.resetTypeState("Game", Game.STATE.Main);
         Panel.resetTypeState("Game", Game.STATE.Main);
+    }
+
+    static openMenu() {
+
+        MENU = true;
+
+        Game.BG = new Sprite({ w: 1, h: 1 }, 0, 0, null, "MENU", { x: CANVAS_WIDTH, y: CANVAS_HEIGHT });
+        Game.BG.addAnimation("normal", { x: 160, y: 0 });
+        Game.BG.changeAnimation("normal");
+        Game.BG.setAlpha(0);
+        Game.BG.fade(0.01);
+        Game.menuList.push(Game.BG);
+
+        Game.menuPanel = new Panel({ w: 300, h: 50, v: 7 }, centerX(300), -100, null, "MENU", Game.STATE.Main, "", 5);
+        Game.menuPanel.setIdTest("menu PANEL");
+
+        Game.menuPanel.setDestination({ x: centerX(300), y: -10});
+        Game.menuPanel.setCanMove(true);
+        Game.menuPanel.setMovingSpeed(0.5);
+        Game.menuPanel.setMoving(true);
+
+        Panel.currentList.push(Game.menuPanel);
+        Game.menuList.push(Game.menuPanel.getSprite());
+
+
+        Game.NormalModeBtn = new Button({ w: 60, h: 24, v: 7}, 15, 15, Game.menuPanel, { cb: Game.menuCB, arg: 1}, "MENU", Game.STATE.Main, "NORMAL", 1); //? 1 : btn style CARD
+        Game.NormalModeBtn.setIdTest("Normal");
+        Game.NormalModeBtn.setFreeLabel();
+        Game.NormalModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        Game.NormalModeBtn.setTextCenterY();
+        Button.currentList.push(Game.NormalModeBtn);
+        Game.menuList.push(Game.NormalModeBtn.getSprite());
+
+        Game.PixelModeBtn = new Button({ w: 60, h: 24, v: 7}, 85, 15, Game.menuPanel, { cb: Game.menuCB, arg: 2}, "MENU", Game.STATE.Main, "PIXEL", 1); //? 1 : btn style CARD
+        Game.PixelModeBtn.setIdTest("Pixel");
+        Game.PixelModeBtn.setFreeLabel();
+        Game.PixelModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        Game.PixelModeBtn.setTextCenterY();
+        Button.currentList.push(Game.PixelModeBtn);
+        Game.menuList.push(Game.PixelModeBtn.getSprite());
+
+        Game.KanjiModeBtn = new Button({ w: 60, h: 24, v: 7}, 155, 15, Game.menuPanel, { cb: Game.menuCB, arg: 3}, "MENU", Game.STATE.Main, "漢字", 1); //? 1 : btn style CARD
+        Game.KanjiModeBtn.setIdTest("漢字");
+        Game.KanjiModeBtn.setFreeLabel();
+        Game.KanjiModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        Game.KanjiModeBtn.setTextCenterY();
+        Button.currentList.push(Game.KanjiModeBtn);
+        Game.menuList.push(Game.KanjiModeBtn.getSprite());
+
+        Game.HanziModeBtn = new Button({ w: 60, h: 24, v: 7}, 225, 15, Game.menuPanel, { cb: Game.menuCB, arg: 4}, "MENU", Game.STATE.Main, "中文", 1); //? 1 : btn style CARD
+        Game.HanziModeBtn.setIdTest("中文");
+        Game.HanziModeBtn.setFreeLabel();
+        Game.HanziModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        Game.HanziModeBtn.setTextCenterY();
+        Button.currentList.push(Game.HanziModeBtn);
+        Game.menuList.push(Game.HanziModeBtn.getSprite());
+
+        Button.currentList.forEach(b => {
+            if (b.type != "MENU") {
+                b.setState(Button.STATE.Inactive);
+            }
+        });
+
+    }
+
+    static closeMenu() {
+        MENU = false;
+        Game.menuPanel.setMoveCB(Game.menuPanel.delete.bind(Game.menuPanel), "");
+        Game.menuPanel.setStartPos({x: centerX(300), y: -10});
+        Game.menuPanel.setDestination({x: centerX(300), y: -100}); //? centerX(300), -100
+        Game.menuPanel.setCanMove(true);
+        Game.menuPanel.setMoving(true);
+
+        Game.BG.delete = true;
+        Button.currentList.forEach(b => {
+            b.setState(Button.STATE.Normal);
+        });
+    }
+
+    static menuCB(nBtn) {
+        switch(nBtn) {
+            case 1:
+                log("normal");
+                break;
+            case 2:
+                log("pixel");
+                break;
+            case 3:
+                log("kanji");
+                break;
+            case 4:
+                log("hanzi");
+                break;
+
+        }
     }
 
     static checkEnd() {
@@ -386,18 +488,18 @@ class Game {
 
         if (!Game.bRestartPanelAlready) {
             Game.bRestartPanelAlready = true;
-            Game.restartPanel = new Panel({ w: 72, h: 34 }, centerX(72), CANVAS_HEIGHT + 34, null, "GameEnding", 0, "", 0, true);
+            Game.restartPanel = new Panel({ w: 90, h: 44 }, centerX(90), CANVAS_HEIGHT + 44, null, "GameEnding", 0, "", 0, true);
             Game.restartPanel.setIdTest("RESTART PANEL");
-            Game.restartPanel.getSprite().addAnimation("normal", {x: 160, y: 16});
+            Game.restartPanel.getSprite().addAnimation("normal", {x: 144, y: 16});
             Game.restartPanel.getSprite().changeAnimation("normal");
-            Game.restartPanel.setDestination({ x: centerX(72), y: 400});
+            Game.restartPanel.setDestination({ x: centerX(90), y: 400});
             Game.restartPanel.setCanMove(true);
             Game.restartPanel.setMovingSpeed(0.5);
             Game.restartPanel.setMoving(true);
             Panel.currentList.push(Game.restartPanel);
             // MAIN_SPRITE_LIST.push(Game.restartPanel.getSprite());
         
-            Game.restartBtn = new Button({ w: 60, h: 23, v: 7}, 6, 5, Game.restartPanel, { cb: Game.init, arg: ""}, "GameEnding", Game.STATE.Main, "RESTART", 1); //? 1 : btn style CARD
+            Game.restartBtn = new Button({ w: 60, h: 23, v: 7}, 14, 9, Game.restartPanel, { cb: Game.init, arg: ""}, "GameEnding", Game.STATE.Main, "RESTART", 1); //? 1 : btn style CARD
             Game.restartBtn.setFreeLabel();
             Game.restartBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
             Game.restartBtn.setTextCenterY();
@@ -421,6 +523,7 @@ class Game {
         Sprite.manageBeforeUpdating(Game.list, dt);
         Sprite.manageBeforeUpdating(Game.movingList, dt);
         Sprite.manageBeforeUpdating(Game.endingList, dt);
+        Sprite.manageBeforeUpdating(Game.menuList, dt);
 
         Panel.currentList.forEach(p => {
             p.update(dt);
@@ -436,6 +539,9 @@ class Game {
             return !sp.delete;
         });
         Game.endingList = Game.endingList.filter(sp => {
+            return !sp.delete;
+        });
+        Game.menuList = Game.menuList.filter(sp => {
             return !sp.delete;
         });
     }
@@ -499,6 +605,8 @@ class Game {
         }
 
         Sprite.manageBeforeDrawing(Game.endingList);
+
+        Sprite.manageBeforeDrawing(Game.menuList);
 
         if (Game.bRestartPanelAlready) {
             Game.restartPanel.drawCtx2();

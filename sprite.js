@@ -743,7 +743,7 @@ class Sprite {
             }
         } else {
             let y = 104;
-            if (mainState === MAIN_STATE.PixelMode) y = 48;
+            if (mainState === MAIN_STATE.PixelMode) y = Card.COL_OFFSET;
 
             for (let i = 0; i < pList.length; i++) {
                 let card = pList[i].getParent();

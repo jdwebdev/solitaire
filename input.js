@@ -709,7 +709,7 @@ if (Input.MOUSE_MOVE) {
         
         if (!inTransition() && mainState != MAIN_STATE.Error) {
             // pick(e.layerX, e.layerY);
-            if (mainState === MAIN_STATE.Game) {
+            if (mainState === MAIN_STATE.Game && !MENU) {
                 let bCollideHSDC = false;
                 // let bCollide = false;
 
@@ -876,7 +876,7 @@ if (Input.MOUSE_MOVE) {
                         
                     });
                 }
-            } else if (mainState === MAIN_STATE.PixelMode) {
+            } else if (mainState === MAIN_STATE.PixelMode && !MENU) {
                 let bCollideHSDC = false;
                 // let bCollide = false;
 
@@ -1482,9 +1482,13 @@ if (Input.MOUSE_DOWN) {
                 if (!CollisionManager.MouseCollision(mouseX, mouseY, RESOLUTION_PANEL_DATA.x, RESOLUTION_PANEL_DATA.y, RESOLUTION_PANEL_DATA.w, RESOLUTION_PANEL_DATA.h)) {
                     closeResolutionPanel();
                 }
-            } else if (SETTINGS) {
-                if (!CollisionManager.MouseCollision(mouseX, mouseY, SETTINGS_PANEL_DATA.x, SETTINGS_PANEL_DATA.y, SETTINGS_PANEL_DATA.w, SETTINGS_PANEL_DATA.h)) {
-                    closeSettings();
+            } else if (MENU) {
+                if (mainState === MAIN_STATE.Game && !CollisionManager.MouseCollision(mouseX, mouseY, Game.menuPanel.x, Game.menuPanel.y, Game.menuPanel.width, Game.menuPanel.height)) {
+                    log(Game.menuPanel.x + " " + Game.menuPanel.y + " " + Game.menuPanel.width + " " + Game.menuPanel.height + " ")
+                    log("! colliding ???");
+                    Game.closeMenu();
+                } else if (mainState === MAIN_STATE.PixelMode && !CollisionManager.MouseCollision(mouseX, mouseY, PixelMode.menuPanel.x, PixelMode.menuPanel.y, PixelMode.menuPanel.width, PixelMode.menuPanel.height)) {
+                    PixelMode.closeMenu();
                 }
             }
     

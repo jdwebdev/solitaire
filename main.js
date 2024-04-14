@@ -1,3 +1,18 @@
+/*
+TODO
+Dessins for JQK
+! MODEs : 
+
+SCENE : SOLITAIRE by JaDonaGames => Choix des modes
+
+Normal : (3 versions) : Normal / Manon Kanji / Hanzi (par défaut 52 derniers de la liste)
+Pixel mode.
+
+Normal => TODO mettre les variables de statemode pour n'afficher que le Normal
+Pixel Mode
+Manon Kanji
+汉语课的
+*/
 let canvas = document.getElementById("canvas");
 canvas.style.fontKerning = "none";
 canvas.style.textRendering = "optimizeSpeed";
@@ -33,6 +48,7 @@ if (BROWSER.includes("Firefox")) {
 
 let MOBILE = false;
 let PIXEL_MODE = 0
+let MENU = false;
 let FRAME_BY_FRAME = false;
 
 const SCALE = Object.freeze({

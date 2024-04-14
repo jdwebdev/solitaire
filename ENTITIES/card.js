@@ -22,6 +22,7 @@ class Card {
         Hover: 1,
         FaceDown: 2,
     });
+    static COL_OFFSET = 68;
 
     constructor(pPosition, pName, pType, pAnimX, pAnimY, pKanji) {
         this.position = pPosition;
@@ -374,7 +375,7 @@ class Card {
             
             let x = 1;
             let xOffset = 27;
-            let yFromTop = 10;
+            let yFromTop = 30;
             
             let test = ["deck","deck2","♥","♠","♦","♣",
                 "c1","c2","c3","c4","c5","c6","c7",
@@ -387,9 +388,7 @@ class Card {
             Card.POSITIONS["♦"] = {x: x, y: yFromTop, type: 4}; x += xOffset;
             Card.POSITIONS["♣"] = {x: x, y: yFromTop, type: 5};
             x = 1;
-            yFromTop = 48;
-            // yOffset = 9;
-            //6 =>
+            yFromTop = Card.COL_OFFSET; //? 68
             let type = 6 //? 0: deck; 1: deck2; 2:heart etc.
             for (let i = 6; i < 13; i++) {
                 Card.POSITIONS[Card.POSITION_LIST[i]] = {x: x, y: yFromTop, type: type};

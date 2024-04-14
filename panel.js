@@ -334,22 +334,13 @@ class Panel {
                     x_l = 44;
                     y_t = 1;
                     break;
-                case 21: //? Panel sombre (v: 1)
-                    x_l = 44;
-                    y_t = 5;
+                case 5: //? Panel Top Menu
+                    x_l = 240;
+                    y_t = 0;
                     break;
-                case 3: //? Panel kana (one lesson screen)
-                    x_l = 456;
-                    y_t = 748;
-                    hoverable = true;
-                    break;
-                case 4: //? Panel background (one lesson screen)
-                    x_l = 456;
-                    y_t = 769;
-                    break;
-                case 5: //? Panel title of panel tile id=1 "chooseType" (v: 16)
-                    x_l = 574;
-                    y_t = 748;
+                case 6: //? Panel sombre (v: 1)
+                    x_l = 160;
+                    y_t = 0;
                     break;
                 case 6: //? Dialog panel, intro
                     x_l = 583;

@@ -8,6 +8,11 @@
     src: url("./fonts/PixelMplus10-Regular.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "cnfont";
+    src: url("./fonts/Unifontexmono-DYWdE.ttf") format("truetype");
+}
+
 /* @font-face {
     font-family: 'kyokasho';
     src: url('./fonts/UDDigiKyokashoN-R.ttc');

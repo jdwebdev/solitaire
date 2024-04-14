@@ -7,6 +7,8 @@ class PixelMode {
 
     static currentState = PixelMode.STATE.Main;
     static list = [];
+
+    static menuList = [];
     
     static cardList = [];
     static lists = [];
@@ -77,17 +79,6 @@ class PixelMode {
         PixelMode.timer = null;
         PixelMode.timerBeforeEnd = null;
 
-        // PixelMode.restartBtn = new Button({ w: 60, h: 24, v: 7}, centerX(46), 200, null, { cb: PixelMode.init, arg: ""}, "PixelMode", PixelMode.STATE.Main, "RESTART", 1); //? 1 : btn style CARD
-        // PixelMode.restartBtn.setFreeLabel();
-        // PixelMode.restartBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
-        // PixelMode.restartBtn.setTextCenterY();
-        // PixelMode.restartBtn.setState(Button.STATE.Inactive);
-
-        // let cadre = new Sprite({ w: 375, h: 600 }, 0, 0, null, "card");
-        // cadre.addAnimation("normal", { x: 0, y: 544 });
-        // cadre.changeAnimation("normal");
-        // PixelMode.list.push(cadre);
-
         let startBtn = new Button({ w: 46, h: 24, v: 7}, 140, 180, null, { cb: PixelMode.init, arg: ""}, "PixelMode", PixelMode.STATE.Main, "START", 1); //? 1 : btn style CARD
         startBtn.setFreeLabel();
         startBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
@@ -99,6 +90,12 @@ class PixelMode {
         changeModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
         changeModeBtn.setTextCenterY();
         PixelMode.list.push(changeModeBtn.getSprite());
+
+        let openMenuBtn = new Button({ w: 46, h: 24, v: 7}, 140, 2, null, { cb: PixelMode.openMenu, arg: ""}, "PixelMode", PixelMode.STATE.Main, "MENU", 1); //? 1 : btn style CARD
+        openMenuBtn.setFreeLabel();
+        openMenuBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        openMenuBtn.setTextCenterY();
+        PixelMode.list.push(openMenuBtn.getSprite());
 
         // let endingBtn = new Button({ w: 46, h: 24, v: 7}, 140, 210, null, { cb: PixelMode.end, arg: ""}, "PixelMode", PixelMode.STATE.Main, "END", 1); //? 1 : btn style CARD
         // endingBtn.setFreeLabel();
@@ -204,6 +201,12 @@ class PixelMode {
         PixelMode.OK_PANEL.addAnimation("normal", { x: 168, y: 384 });
         PixelMode.OK_PANEL.changeAnimation("normal");
 
+        // PixelMode.menuPanel = new Panel({ w: 170, h: 70, v: 7 }, centerX(170), -10, null, "PixelMode", PixelMode.STATE.Main, "", 5);
+        // PixelMode.menuPanel.setIdTest("menu PANEL");
+        // Panel.currentList.push(PixelMode.menuPanel);
+        // PixelMode.menuList.push(PixelMode.menuPanel.getSprite());
+
+
         PixelMode.bDisplayOkPanel = false;
 
         let count = 1;
@@ -301,12 +304,108 @@ class PixelMode {
         //     c.position = c.type;
         //     PixelMode.lists[c.position].push(c.getSprite()); 
         // });
-        // PixelMode.lists["c1"].push(PixelMode.lists["♥"].pop());
-        // PixelMode.lists["c1"][0].parent.position = "c1";
+        // PixelMode.lists["c4"].push(PixelMode.lists["♥"].pop());
+        // PixelMode.lists["c4"][0].parent.position = "c4";
         //! -----------------
 
         Button.resetTypeState("PixelMode", PixelMode.STATE.Main);
         Panel.resetTypeState("PixelMode", PixelMode.STATE.Main);
+    }
+
+    static openMenu() {
+
+        MENU = true;
+
+        PixelMode.BG = new Sprite({ w: 1, h: 1 }, 0, 0, null, "MENU", { x: CANVAS_WIDTH, y: CANVAS_HEIGHT });
+        PixelMode.BG.addAnimation("normal", { x: 160, y: 0 });
+        PixelMode.BG.changeAnimation("normal");
+        PixelMode.BG.setAlpha(0);
+        PixelMode.BG.fade(0.01);
+        PixelMode.menuList.push(PixelMode.BG);
+
+        //?{ w: 170, h: 70, v: 7 }, centerX(170), -10
+        PixelMode.menuPanel = new Panel({ w: 170, h: 70, v: 7 }, centerX(170), -70, null, "MENU", PixelMode.STATE.Main, "", 5);
+        PixelMode.menuPanel.setIdTest("menu PANEL");
+
+        PixelMode.menuPanel.setDestination({ x: centerX(170), y: -10});
+        PixelMode.menuPanel.setCanMove(true);
+        PixelMode.menuPanel.setMovingSpeed(0.3);
+        PixelMode.menuPanel.setMoving(true);
+
+        Panel.currentList.push(PixelMode.menuPanel);
+        PixelMode.menuList.push(PixelMode.menuPanel.getSprite());
+
+
+        PixelMode.NormalModeBtn = new Button({ w: 60, h: 24, v: 7}, 19, 14, PixelMode.menuPanel, { cb: PixelMode.menuCB, arg: 1}, "MENU", PixelMode.STATE.Main, "NORMAL", 1); //? 1 : btn style CARD
+        PixelMode.NormalModeBtn.setIdTest("Normal");
+        PixelMode.NormalModeBtn.setFreeLabel();
+        PixelMode.NormalModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        PixelMode.NormalModeBtn.setTextCenterY();
+        Button.currentList.push(PixelMode.NormalModeBtn);
+        PixelMode.menuList.push(PixelMode.NormalModeBtn.getSprite());
+
+        PixelMode.PixelModeBtn = new Button({ w: 60, h: 24, v: 7}, 89, 14, PixelMode.menuPanel, { cb: PixelMode.menuCB, arg: 2}, "MENU", PixelMode.STATE.Main, "PIXEL", 1); //? 1 : btn style CARD
+        PixelMode.PixelModeBtn.setIdTest("Pixel");
+        PixelMode.PixelModeBtn.setFreeLabel();
+        PixelMode.PixelModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        PixelMode.PixelModeBtn.setTextCenterY();
+        Button.currentList.push(PixelMode.PixelModeBtn);
+        PixelMode.menuList.push(PixelMode.PixelModeBtn.getSprite());
+
+        PixelMode.KanjiModeBtn = new Button({ w: 60, h: 24, v: 7}, 19, 39, PixelMode.menuPanel, { cb: PixelMode.menuCB, arg: 3}, "MENU", PixelMode.STATE.Main, "漢字", 1); //? 1 : btn style CARD
+        PixelMode.KanjiModeBtn.setIdTest("漢字");
+        PixelMode.KanjiModeBtn.setFreeLabel();
+        PixelMode.KanjiModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        PixelMode.KanjiModeBtn.setTextCenterY();
+        Button.currentList.push(PixelMode.KanjiModeBtn);
+        PixelMode.menuList.push(PixelMode.KanjiModeBtn.getSprite());
+
+        PixelMode.HanziModeBtn = new Button({ w: 60, h: 24, v: 7}, 89, 39, PixelMode.menuPanel, { cb: PixelMode.menuCB, arg: 4}, "MENU", PixelMode.STATE.Main, "中文", 1); //? 1 : btn style CARD
+        PixelMode.HanziModeBtn.setIdTest("中文");
+        PixelMode.HanziModeBtn.setFreeLabel();
+        PixelMode.HanziModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        PixelMode.HanziModeBtn.setTextCenterY();
+        Button.currentList.push(PixelMode.HanziModeBtn);
+        PixelMode.menuList.push(PixelMode.HanziModeBtn.getSprite());
+
+        Button.currentList.forEach(b => {
+            if (b.type != "MENU") {
+                b.setState(Button.STATE.Inactive);
+            }
+        });
+
+    }
+
+    static closeMenu() {
+        MENU = false;
+        PixelMode.menuPanel.setMoveCB(PixelMode.menuPanel.delete.bind(PixelMode.menuPanel), "");
+        PixelMode.menuPanel.setStartPos({x: centerX(170), y: -10});
+        PixelMode.menuPanel.setDestination({x: centerX(170), y: -70}); //? centerX(300), -100
+        PixelMode.menuPanel.setCanMove(true);
+        PixelMode.menuPanel.setMoving(true);
+
+        PixelMode.BG.delete = true;
+        Button.currentList.forEach(b => {
+            b.setState(Button.STATE.Normal);
+        });
+    }
+
+    static menuCB(nBtn) {
+        switch(nBtn) {
+            case 1:
+                log("normal");
+                break;
+            case 2:
+                log("pixel");
+                break;
+            case 3:
+                log("kanji");
+                break;
+            case 4:
+                log("hanzi");
+                break;
+
+        }
     }
 
     static checkEnd() {
@@ -384,17 +483,17 @@ class PixelMode {
 
         if (!PixelMode.bRestartPanelAlready) {
             PixelMode.bRestartPanelAlready = true;
-            PixelMode.restartPanel = new Panel({ w: 72, h: 34 }, centerX(72), CANVAS_HEIGHT + 34, null, "all", 0, "", 0, true);
+            PixelMode.restartPanel = new Panel({ w: 90, h: 44 }, centerX(90), CANVAS_HEIGHT + 44, null, "all", 0, "", 0, true);
             PixelMode.restartPanel.setIdTest("RESTART PANEL");
-            PixelMode.restartPanel.getSprite().addAnimation("normal", {x: 160, y: 16});
+            PixelMode.restartPanel.getSprite().addAnimation("normal", {x: 144, y: 16});
             PixelMode.restartPanel.getSprite().changeAnimation("normal");
-            PixelMode.restartPanel.setDestination({ x: centerX(72), y: 200});
+            PixelMode.restartPanel.setDestination({ x: centerX(90), y: 170});
             PixelMode.restartPanel.setCanMove(true);
             PixelMode.restartPanel.setMovingSpeed(0.5);
             PixelMode.restartPanel.setMoving(true);
             Panel.currentList.push(PixelMode.restartPanel);
 
-            PixelMode.restartBtn = new Button({ w: 60, h: 24, v: 7}, 6, 5, PixelMode.restartPanel, { cb: PixelMode.init, arg: ""}, "PixelMode", PixelMode.STATE.Main, "RESTART", 1); //? 1 : btn style CARD
+            PixelMode.restartBtn = new Button({ w: 60, h: 24, v: 7}, 14, 9, PixelMode.restartPanel, { cb: PixelMode.init, arg: ""}, "PixelMode", PixelMode.STATE.Main, "RESTART", 1); //? 1 : btn style CARD
             PixelMode.restartBtn.setFreeLabel();
             PixelMode.restartBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
             PixelMode.restartBtn.setTextCenterY();
@@ -416,6 +515,7 @@ class PixelMode {
         Sprite.manageBeforeUpdating(PixelMode.list, dt);
         Sprite.manageBeforeUpdating(PixelMode.movingList, dt);
         Sprite.manageBeforeUpdating(PixelMode.endingList, dt);
+        Sprite.manageBeforeUpdating(PixelMode.menuList, dt);
 
         Panel.currentList.forEach(p => {
             p.update(dt)
@@ -431,6 +531,9 @@ class PixelMode {
             return !sp.delete;
         });
         PixelMode.endingList = PixelMode.endingList.filter(sp => {
+            return !sp.delete;
+        });
+        PixelMode.menuList = PixelMode.menuList.filter(sp => {
             return !sp.delete;
         });
     }
@@ -484,6 +587,8 @@ class PixelMode {
         }
 
         Sprite.manageBeforeDrawing(PixelMode.endingList);
+
+        Sprite.manageBeforeDrawing(PixelMode.menuList);
 
         if (PixelMode.bRestartPanelAlready) {
             PixelMode.restartPanel.drawCtx2();
