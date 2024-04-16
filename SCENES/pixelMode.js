@@ -79,17 +79,17 @@ class PixelMode {
         PixelMode.timer = null;
         PixelMode.timerBeforeEnd = null;
 
-        let startBtn = new Button({ w: 46, h: 24, v: 7}, 140, 180, null, { cb: PixelMode.init, arg: ""}, "PixelMode", PixelMode.STATE.Main, "START", 1); //? 1 : btn style CARD
-        startBtn.setFreeLabel();
-        startBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
-        startBtn.setTextCenterY();
-        PixelMode.list.push(startBtn.getSprite());
+        // let startBtn = new Button({ w: 46, h: 24, v: 7}, 140, 180, null, { cb: PixelMode.init, arg: ""}, "PixelMode", PixelMode.STATE.Main, "START", 1); //? 1 : btn style CARD
+        // startBtn.setFreeLabel();
+        // startBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        // startBtn.setTextCenterY();
+        // PixelMode.list.push(startBtn.getSprite());
 
-        let changeModeBtn = new Button({ w: 46, h: 24, v: 7}, 140, 210, null, { cb: changeMode, arg: ""}, "PixelMode", PixelMode.STATE.Main, "MODE", 1); //? 1 : btn style CARD
-        changeModeBtn.setFreeLabel();
-        changeModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
-        changeModeBtn.setTextCenterY();
-        PixelMode.list.push(changeModeBtn.getSprite());
+        // let changeModeBtn = new Button({ w: 46, h: 24, v: 7}, 140, 210, null, { cb: changeMode, arg: ""}, "PixelMode", PixelMode.STATE.Main, "MODE", 1); //? 1 : btn style CARD
+        // changeModeBtn.setFreeLabel();
+        // changeModeBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        // changeModeBtn.setTextCenterY();
+        // PixelMode.list.push(changeModeBtn.getSprite());
 
         let openMenuBtn = new Button({ w: 46, h: 24, v: 7}, 140, 2, null, { cb: PixelMode.openMenu, arg: ""}, "PixelMode", PixelMode.STATE.Main, "MENU", 1); //? 1 : btn style CARD
         openMenuBtn.setFreeLabel();
@@ -297,7 +297,6 @@ class PixelMode {
         // for (const pos in PixelMode.lists) {
         //     PixelMode.lists[pos] = [];
         // }
-        // // PixelMode.list = [];
         // Card.list.forEach(c => {
         //     c.state = Card.STATE.Normal;
         //     c.getSprite().changeAnimation("normal");
@@ -391,18 +390,28 @@ class PixelMode {
     }
 
     static menuCB(nBtn) {
+        MENU = false;
+        PixelMode.menuPanel.delete();
+        PixelMode.BG.delete = true;
+        Button.currentList.forEach(b => {
+            b.setState(Button.STATE.Normal);
+        });
+
         switch(nBtn) {
             case 1:
-                log("normal");
+                Game.currentGameType = Game.GAME_TYPE.Normal;
+                changeMode();
                 break;
             case 2:
-                log("pixel");
+                PixelMode.init();
                 break;
             case 3:
-                log("kanji");
+                Game.currentGameType = Game.GAME_TYPE.Kanji;
+                changeMode();
                 break;
             case 4:
-                log("hanzi");
+                Game.currentGameType = Game.GAME_TYPE.Hanzi;
+                changeMode();
                 break;
 
         }

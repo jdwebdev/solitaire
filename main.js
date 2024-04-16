@@ -1,18 +1,3 @@
-/*
-TODO
-Dessins for JQK
-! MODEs : 
-
-SCENE : SOLITAIRE by JaDonaGames => Choix des modes
-
-Normal : (3 versions) : Normal / Manon Kanji / Hanzi (par défaut 52 derniers de la liste)
-Pixel mode.
-
-Normal => TODO mettre les variables de statemode pour n'afficher que le Normal
-Pixel Mode
-Manon Kanji
-汉语课的
-*/
 let canvas = document.getElementById("canvas");
 canvas.style.fontKerning = "none";
 canvas.style.textRendering = "optimizeSpeed";
@@ -235,7 +220,7 @@ let imageDatasArr = [];
 // ---------------- END DEBUG
 
 const MAIN_STATE = Object.freeze({
-    Language: 0,
+    TitleScreen: 0,
     Splash: 1,
     MainScreen: 2,
     Game: 3,
@@ -250,7 +235,9 @@ if (shortcut_tomainmenu) {
     if (PIXEL_MODE) {
         mainState = MAIN_STATE.PixelMode;
     } else {
-        mainState = MAIN_STATE.Game;
+        // mainState = MAIN_STATE.Game;
+        mainState = MAIN_STATE.TitleScreen;
+        TitleScreenMode();
     }
 }
 
@@ -284,20 +271,23 @@ function init() {
 
     Tango.init();
     Kanji.init();
-    log(Kanji.list);
+    Z_word.init();
+    Hanzi.init();
 
     if (shortcut_tomainmenu) {
         MainMenu.init();
         toMainMenu()
     } else {
+        TitleScreen.init();
+
         // LoadScreen.init()
         // SplashScreen.init();
-        Card.initCardList();
-        if (mainState === MAIN_STATE.Game) {
-            Game.init();
-        } else {
-            PixelMode.init();
-        }
+        // Card.initCardList();
+        // if (mainState === MAIN_STATE.Game) {
+        //     Game.init();
+        // } else {
+        //     PixelMode.init();
+        // }
     }
 
     
@@ -552,8 +542,8 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
     }
 
     switch (mainState) {
-        case MAIN_STATE.Language:
-            LanguageScreen.update(dt);
+        case MAIN_STATE.TitleScreen:
+            TitleScreen.update(dt);
             break;
         case MAIN_STATE.Splash:
             SplashScreen.update(dt);
@@ -619,8 +609,8 @@ function run(pTime) { //? Time est envoyé automatiquement par "requestAnimation
     }
 
     switch (mainState) {
-        case MAIN_STATE.Language:
-            LanguageScreen.draw(ctx);
+        case MAIN_STATE.TitleScreen:
+            TitleScreen.draw(ctx);
             break;
         case MAIN_STATE.Splash:
             SplashScreen.draw(ctx);
@@ -756,7 +746,7 @@ function changeMainState(pNewState) {
     }
 }
 
-function changeMode(pMode) {
+function changeMode() {
     PIXEL_MODE = PIXEL_MODE === 0 ? 1 : 0
     if (windowWidth < 900) {
         currentScale = SCALE.STATE_1;
@@ -801,9 +791,53 @@ function changeMode(pMode) {
         Card.initCardList();
         PixelMode.init();
     } else {
+        // log("before change main state")
         changeMainState(MAIN_STATE.Game);
         Card.initCardList();
         Game.init();
     }
     
+}
+
+function TitleScreenMode() {
+    if (windowWidth < 900) {
+        currentScale = SCALE.STATE_2
+    } else {
+        currentScale = SCALE.STATE_4
+    }
+
+    SCALE_X = currentScale;
+    SCALE_Y = currentScale;
+
+    if (SCALE_X === 4) {
+        canvas.width = scaleList[currentScale-2].width;
+        canvas.height = scaleList[currentScale-2].height;
+    } else {
+        canvas.width = scaleList[currentScale-1].width;
+        canvas.height = scaleList[currentScale-1].height;
+    }
+
+    canvas2.width = canvas.width;
+    canvas2.height = canvas.height;
+
+    CANVAS_WIDTH = canvas.width / SCALE_X; //? 188!!!!
+    CANVAS_HEIGHT = canvas.height / SCALE_Y;
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.msImageSmoothingEnabled = false;
+    ctx2.webkitImageSmoothingEnabled = false;
+
+    // if (PIXEL_MODE) {
+    //     changeMainState(MAIN_STATE.PixelMode);
+    //     Card.initCardList();
+    //     PixelMode.init();
+    // } else {
+    //     changeMainState(MAIN_STATE.Game);
+    //     Card.initCardList();
+    //     Game.init();
+    // }
 }

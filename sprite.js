@@ -391,8 +391,10 @@ class Sprite {
                     Card.inTransition.bMoving = false;
                     Card.inTransition = null;
                     TRANSITION = false;
-                    if (mainState === MAIN_STATE.PixelMode)
-                    PixelMode.checkEnd();
+                    if (mainState === MAIN_STATE.PixelMode) PixelMode.checkEnd();
+                    if (mainState === MAIN_STATE.Game) {
+                        if (Game.currentGameType === Game.GAME_TYPE.Normal) Game.checkEnd();
+                    }
                 } else {
                     Card.inTransitionList[0].bMoving = false;
                     Card.inTransitionList.shift();
@@ -402,7 +404,7 @@ class Sprite {
                     }
                 }
             }
-        } else if (this.type === "mcc") {
+        } else if (this.type === "mcc") { //? Moving Card Child
             if (this.parent.delete) {
                 this.delete = true;
                 if (mainState === MAIN_STATE.Game) { //!    && KANJI / HANZI version
@@ -667,7 +669,7 @@ class Sprite {
                     pList[lastPos].draw(ctx);
                 }
 
-                if (mainState === MAIN_STATE.Game) { //? Affichage KanjiCard
+                if (mainState === MAIN_STATE.Game && Game.currentGameType !== Game.GAME_TYPE.Normal) { //? Affichage KanjiCard
                     if (card.state !== Card.STATE.FaceDown && !card.bMoving) {
                         Game.kanjiBG.x = card.x+1;
                         Game.kanjiBG.y = card.y+13;
@@ -701,9 +703,9 @@ class Sprite {
                         Game.hoverPanel.x = card.x;
                         Game.hoverPanel.y = card.y;
                         sp = Game.hoverPanel.getSprite();
-                        if (!MOBILE) {
+                        if (!MOBILE && Game.currentGameType !== Game.GAME_TYPE.Normal) {
                             if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
-                                let innerHTML = card.kanji.yomi + "<br/>";
+                                let innerHTML = card.kanji.reading + "<br/>";
                                 card.kanji.exList.forEach(t => {
                                     innerHTML += t + "<br/>"
                                 });
@@ -716,8 +718,8 @@ class Sprite {
                         Game.selectPanel.y = card.y;
                         Game.selectPanel.draw(ctx);
 
-                        if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
-                            let innerHTML = card.kanji.yomi + "<br/>";
+                        if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect && Game.currentGameType !== Game.GAME_TYPE.Normal) {
+                            let innerHTML = card.kanji.reading + "<br/>";
                             card.kanji.exList.forEach(t => {
                                 innerHTML += t + "<br/>"
                             });
@@ -762,7 +764,7 @@ class Sprite {
                     y+= 10;
                 }
                 
-                if (mainState === MAIN_STATE.Game) { //? Affichage KanjiCard
+                if (mainState === MAIN_STATE.Game && Game.currentGameType !== Game.GAME_TYPE.Normal) { //? Affichage KanjiCard
                     if (card.state !== Card.STATE.FaceDown && !card.bMoving) {
                         Game.kanjiBG.x = card.x+1;
                         Game.kanjiBG.y = card.y+13;
@@ -795,8 +797,8 @@ class Sprite {
                         Game.hoverPanel.y = card.y;
                         sp = Game.hoverPanel.getSprite();
                         if (card.state !== Card.STATE.FaceDown) {
-                            if (!MOBILE && !Card.multiHover && !Card.multiSelect) {
-                                let innerHTML = card.kanji.yomi + "<br/>";
+                            if (!MOBILE && !Card.multiHover && !Card.multiSelect && Game.currentGameType !== Game.GAME_TYPE.Normal) {
+                                let innerHTML = card.kanji.reading + "<br/>";
                                 card.kanji.exList.forEach(t => {
                                     innerHTML += t + "<br/>"
                                 });
@@ -808,8 +810,8 @@ class Sprite {
                         Game.selectPanel.x = card.x;
                         Game.selectPanel.y = card.y;
                         Game.selectPanel.draw(ctx);
-                        if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
-                            let innerHTML = card.kanji.yomi + "<br/>";
+                        if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect && Game.currentGameType !== Game.GAME_TYPE.Normal) {
+                            let innerHTML = card.kanji.reading + "<br/>";
                             card.kanji.exList.forEach(t => {
                                 innerHTML += t + "<br/>"
                             });

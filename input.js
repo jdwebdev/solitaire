@@ -1484,8 +1484,6 @@ if (Input.MOUSE_DOWN) {
                 }
             } else if (MENU) {
                 if (mainState === MAIN_STATE.Game && !CollisionManager.MouseCollision(mouseX, mouseY, Game.menuPanel.x, Game.menuPanel.y, Game.menuPanel.width, Game.menuPanel.height)) {
-                    log(Game.menuPanel.x + " " + Game.menuPanel.y + " " + Game.menuPanel.width + " " + Game.menuPanel.height + " ")
-                    log("! colliding ???");
                     Game.closeMenu();
                 } else if (mainState === MAIN_STATE.PixelMode && !CollisionManager.MouseCollision(mouseX, mouseY, PixelMode.menuPanel.x, PixelMode.menuPanel.y, PixelMode.menuPanel.width, PixelMode.menuPanel.height)) {
                     PixelMode.closeMenu();
@@ -1864,11 +1862,13 @@ if (Input.MOUSE_CLICK) {
                                 newSprite.setDestination({ x: Game.OK_PANEL.x, y: Game.OK_PANEL.y });
                                 newSprite.setMoveSpeed(0.5);
                                 Game.movingList.push(newSprite);
-                                
-                                let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
-                                kanjiSprite.addAnimation("normal", { x: 336, y: 16});
-                                kanjiSprite.changeAnimation("normal");
-                                Game.movingList.push(kanjiSprite);
+                                    
+                                if (Game.currentGameType !== Game.GAME_TYPE.Normal) {
+                                    let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
+                                    kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+                                    kanjiSprite.changeAnimation("normal");
+                                    Game.movingList.push(kanjiSprite);
+                                }
 
 
                                 Game.lists[Card.selected.position].pop();
