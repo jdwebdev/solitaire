@@ -608,17 +608,16 @@ class Sprite {
                     sp.draw(ctx);
                     if (Card.inTransition !== null) {
                         if (sp.type === "mcc") {
-                            ctx.font = 24 + "px " + "kyokasho";
+                            ctx.font = Card.font;
                             if (Card.inTransition.type === "♥" || Card.inTransition.type === "♦") {
                                 text(ctx, Card.inTransition.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40, RED_COLOR);
                             } else {
                                 text(ctx, Card.inTransition.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40);
                             }
                         }
-                        // ctx.font = 24 + "px " + "kyokasho";
                     } else if (Card.multiTransition) {
                         if (sp.type === "mcc" && !PIXEL_MODE) {
-                            ctx.font = 24 + "px " + "kyokasho";
+                            ctx.font = Card.font;
                             if (Card.inTransitionList[Card.inTransitionList.length-1].type === "♥" || Card.inTransitionList[Card.inTransitionList.length-1].type === "♦") {
                                 text(ctx, Card.inTransitionList[Card.inTransitionList.length-1].kanji.kanji, sp.parent.x + 12, sp.parent.y + 40, RED_COLOR);
                             } else {
@@ -628,7 +627,7 @@ class Sprite {
                     }
                     if (Game.currentState === Game.STATE.Ending) {
                         if (sp.type === "endc") {
-                            ctx.font = 24 + "px " + "kyokasho";
+                            ctx.font = Card.font;
                             if (sp.parentCard.type === "♥" || sp.parentCard.type === "♦") {
                                 text(ctx, sp.parentCard.kanji.kanji, sp.parent.x + 12, sp.parent.y + 40, RED_COLOR);
                             } else {
@@ -674,7 +673,7 @@ class Sprite {
                         Game.kanjiBG.x = card.x+1;
                         Game.kanjiBG.y = card.y+13;
                         Game.kanjiBG.draw(ctx);
-                        ctx.font = 24 + "px " + "kyokasho";
+                        ctx.font = Card.font;
                         if (card.type === "♥" || card.type === "♦") {
                             text(ctx, card.kanji.kanji, card.x+12, card.y+40, RED_COLOR);
                         } else {
@@ -769,7 +768,7 @@ class Sprite {
                         Game.kanjiBG.x = card.x+1;
                         Game.kanjiBG.y = card.y+13;
                         Game.kanjiBG.draw(ctx);
-                        ctx.font = 24 + "px " + "kyokasho";
+                        ctx.font = Card.font;
                         if (card.type === "♥" || card.type === "♦") {
                             text(ctx, card.kanji.kanji, card.x+12, card.y+40, RED_COLOR);
                         } else {

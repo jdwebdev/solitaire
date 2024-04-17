@@ -1,3 +1,7 @@
+/*
+Dessins for JQK
+*/
+
 let canvas = document.getElementById("canvas");
 canvas.style.fontKerning = "none";
 canvas.style.textRendering = "optimizeSpeed";
@@ -252,7 +256,7 @@ function checkAssetsLoading() {
 }
 
 function init() {
-
+    
     console.log("------------------------");
     console.log("init");
 
@@ -268,6 +272,9 @@ function init() {
     // ARROWS.addAnimation("normal", {x: 1152, y: 944});
     // ARROWS.changeAnimation("normal");
     // MAIN_SPRITE_LIST.push(ARROWS.getSprite());
+
+
+    toast("width: " + windowWidth);
 
     Tango.init();
     Kanji.init();
@@ -511,7 +518,8 @@ function closeResolutionPanel() {
 }
 
 function testToast(a) {
-    toast("Toast !", "d", 0);
+    // toast("Toast !", "d", 0);
+    // toast("Toast !", "d", 0);
 }
 
 function showUserAgent(pArg) {

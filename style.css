@@ -70,7 +70,7 @@ body {
 
 #yomi {
     position: absolute;
-    font-family: kyokasho;
+    /* font-family: kyokasho; */
     font-size: 30px;
     /* max-width: 300px; */
 }

@@ -217,11 +217,15 @@ class Game {
         Game.bDisplayOkPanel = false;
 
         let randomKanjiList = [];
-        if (Game.currentGameType == 1) {
+        if (Game.currentGameType == Game.GAME_TYPE.Kanji) {
             randomKanjiList = randomizer(Kanji.list, Kanji.list.length);
-        } else if (Game.currentGameType == 2) {
+            Card.font = "24px kyokasho";
+            yomiText.element.style.font= yomiText.size + "px kyokasho";
+        } else if (Game.currentGameType == Game.GAME_TYPE.Hanzi) {
             randomKanjiList = Hanzi.last52();
             randomKanjiList = randomizer(randomKanjiList, randomKanjiList.length);
+            Card.font = "24px arial";
+            yomiText.element.style.font = yomiText.size + "px arial";
         }
 
         let count = 0;

@@ -23,6 +23,7 @@ class Card {
         FaceDown: 2,
     });
     static COL_OFFSET = 68;
+    static font = "24px kyokasho";
 
     constructor(pPosition, pName, pType, pAnimX, pAnimY, pKanji) {
         this.position = pPosition;
