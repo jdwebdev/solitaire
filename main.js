@@ -1,7 +1,3 @@
-/*
-Dessins for JQK
-*/
-
 let canvas = document.getElementById("canvas");
 canvas.style.fontKerning = "none";
 canvas.style.textRendering = "optimizeSpeed";
@@ -273,8 +269,6 @@ function init() {
     // ARROWS.changeAnimation("normal");
     // MAIN_SPRITE_LIST.push(ARROWS.getSprite());
 
-
-    toast("width: " + windowWidth);
 
     Tango.init();
     Kanji.init();

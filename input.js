@@ -1695,7 +1695,7 @@ if (Input.MOUSE_CLICK) {
             const mouseY = e.layerY / SCALE_Y;
     
             // if (MainMenu.state != MainMenu.STATE.Transition && Game1.currentState != Game1.STATE.Transition) {
-            if (mainState === MAIN_STATE.Game) { //! GAME1 ---------------------
+            if (mainState === MAIN_STATE.Game) { //! GAME ---------------------
 
                 if (Game.bDeckHover) {
                     if (Game.lists["deck"].length > 0) {
@@ -1823,7 +1823,7 @@ if (Input.MOUSE_CLICK) {
                                         speed += 0.01;
                                         Game.movingList.push(newSprite);
                                         
-                                        if (count === nbToPop) {
+                                        if (count === nbToPop && Game.currentGameType !== Game.GAME_TYPE.Normal) {
                                             let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
                                             kanjiSprite.addAnimation("normal", { x: 336, y: 16});
                                             kanjiSprite.changeAnimation("normal");
