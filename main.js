@@ -71,7 +71,7 @@ let currentScale = SCALE.STATE_2; //! AZE
 
 let windowWidth = window.innerWidth;
 
-if (windowWidth < 900) {
+if (windowWidth <= 1000) {
     currentScale = SCALE.STATE_1;
     if (PIXEL_MODE) currentScale = SCALE.STATE_2
     MOBILE = true;
@@ -756,7 +756,7 @@ function changeMainState(pNewState) {
 
 function changeMode() {
     PIXEL_MODE = PIXEL_MODE === 0 ? 1 : 0
-    if (windowWidth < 900) {
+    if (windowWidth <= 1000) {
         currentScale = SCALE.STATE_1;
         if (PIXEL_MODE) currentScale = SCALE.STATE_2
         MOBILE = true;
@@ -808,7 +808,7 @@ function changeMode() {
 }
 
 function TitleScreenMode() {
-    if (windowWidth < 900) {
+    if (windowWidth <= 1000) {
         currentScale = SCALE.STATE_2
     } else {
         currentScale = SCALE.STATE_4
