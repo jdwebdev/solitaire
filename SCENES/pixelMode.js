@@ -512,7 +512,17 @@ class PixelMode {
     }
 
     static getLastOf(pList) {
-        return PixelMode.lists[pList][PixelMode.lists[pList].length-1].getParent();
+        if (PixelMode.lists[pList] === undefined) return null;
+        if (PixelMode.lists[pList].length > 0) {
+            return PixelMode.lists[pList][PixelMode.lists[pList].length-1].getParent();
+        } else {
+            return null;
+        }
+        // if (PixelMode.lists[pList].length > 1 ) {
+        //     return PixelMode.lists[pList][PixelMode.lists[pList].length-1].getParent();
+        // } else {
+        //     return null;
+        // }
     }
 
     static update(dt) {

@@ -540,7 +540,12 @@ class Game {
     }
 
     static getLastOf(pList) {
-        return Game.lists[pList][Game.lists[pList].length-1].getParent();
+        if (Game.lists[pList] === undefined) return null;
+        if (Game.lists[pList].length > 0) {
+            return Game.lists[pList][Game.lists[pList].length-1].getParent();
+        } else {
+            return null;
+        }
     }
 
     static update(dt) {

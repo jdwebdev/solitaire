@@ -6,6 +6,7 @@ class Input {
     static KEYBOARD_KEYDOWN = false;
     static KEYBOARD_KEYUP = false;
     static CONTEXT_MENU = true;
+    static DOUBLE_CLICK = true;
 
     static bDownKey = false;
     static bUpKey = false;
@@ -2340,6 +2341,225 @@ if (Input.MOUSE_CLICK) {
             MOUSE_SPRITE.changeAnimation("normal");
         }
     }
+}
+
+if (Input.DOUBLE_CLICK) {
+    canvas.addEventListener("dblclick", e => {
+
+        if (!inTransition() && e.button == 0 && mainState != MAIN_STATE.Error) {
+            const mouseX = e.layerX / SCALE_X;
+            const mouseY = e.layerY / SCALE_Y;
+
+            let lastHSDC = [];
+
+            let bCollideHSDC = false;
+            if (mainState === MAIN_STATE.Game) {
+                if (Game.bDeckHover) return;
+                Game.HSDC_LIST.forEach(HSDC => {
+                    lastHSDC[HSDC.type] = Game.getLastOf(HSDC.type);
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
+                        bCollideHSDC = true;
+                    }
+                });
+            } else if (mainState === MAIN_STATE.PixelMode) {
+                if (PixelMode.bDeckHover) return;
+                PixelMode.HSDC_LIST.forEach(HSDC => {
+                    lastHSDC[HSDC.type] = PixelMode.getLastOf(HSDC.type);
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, HSDC.x, HSDC.y, HSDC.w, HSDC.h)) {
+                        bCollideHSDC = true;
+                    }
+                });
+            }
+            if (bCollideHSDC) return;
+            
+            let bOneCollision = false;
+            let bCollidingDeck2 = false;
+            let bOkGo = false;
+
+            if (mainState === MAIN_STATE.Game) {
+                let card = Game.getLastOf("deck2");
+                if (card !== null) {
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, card.x, card.y, card.width, card.height)) {
+                        bCollidingDeck2 = true;
+                        if (lastHSDC[card.type] !== null) {
+                            if (Card.check(card.name, card.type, lastHSDC[card.type].name, card.type, false)) {
+                                bOkGo = true;
+                            }
+                        } else {
+                            if (card.name === "A") {
+                                bOkGo = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!bCollidingDeck2) {
+                    card = null;
+                    Game.POS_LIST.forEach(pos => { //? Collision with c1 c2 etc.
+                        if (!bOkGo) {
+                            // log("pos: ")
+                            // log(pos.list)
+                            card = Game.getLastOf(pos.list);
+                            // log("card last of " + pos.list) 
+                            // log(card)
+                            if (card !== null) {
+                                if (CollisionManager.MouseCollision(mouseX, mouseY, card.x, card.y, card.width, card.height)) {
+                                    // log("collision with : " + card.infos());
+                                    //? Collision with last card of c1, c2 etc.
+                                    if (lastHSDC[card.type] !== null) {
+                                        if (Card.check(card.name, card.type, lastHSDC[card.type].name, card.type, false)) {
+                                            bOkGo = true;
+                                        }
+                                    } else {
+                                        if (card.name === "A") {
+                                            bOkGo = true;
+                                        }
+                                    }
+    
+                                }
+                                
+                            }
+                        }
+                    })
+                }
+
+                if (bOkGo) {
+                    Game.HSDC_LIST.forEach(HSDC => {
+                        if (HSDC.type === card.type) {
+                            Game.OK_PANEL.x = HSDC.x
+                            Game.OK_PANEL.y = HSDC.y;
+                        }
+                    });
+
+                    Game.listToGoTo = card.type;
+
+                    Card.selected = card;
+                    
+                    yomiText.element.innerHTML = "";
+                    Card.inTransition = Card.selected;
+                    Card.selected.bMoving = true;
+                    TRANSITION = true;
+                    Game.bDeck2Hover = false;
+
+                    let newSprite = new Sprite({ w: 48, h: 64 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
+                    newSprite.addAnimation("normal", { x: Card.selected.getSprite().getAnimation("normal").origin.x, y: Card.selected.getSprite().getAnimation("normal").origin.y });
+                    newSprite.changeAnimation("normal");
+                    newSprite.setDestination({ x: Game.OK_PANEL.x, y: Game.OK_PANEL.y });
+                    newSprite.setMoveSpeed(0.5);
+                    Game.movingList.push(newSprite);
+                        
+                    if (Game.currentGameType !== Game.GAME_TYPE.Normal) {
+                        let kanjiSprite = new Sprite({ w: 46, h: 38 }, 1, 13, newSprite, "mcc"); //? Moving Card Child
+                        kanjiSprite.addAnimation("normal", { x: 336, y: 16});
+                        kanjiSprite.changeAnimation("normal");
+                        Game.movingList.push(kanjiSprite);
+                    }
+
+                    Game.lists[Card.selected.position].pop();
+                    Game.lists[Game.listToGoTo].push(Card.selected.sp);
+                    Card.selected.position = Game.listToGoTo;
+                    Card.selected.bSelect = false;
+
+                    Game.bDisplayOkPanel = false;
+                    Card.selected = null;
+                    Game.listToGoTo = "";
+                    if (Game.lists["deck"].length === 0 && Game.lists["deck2"].length === 0) {
+                        Game.DECK.changeAnimation("void");
+                    }
+                    return;
+                }
+            } else if (mainState === MAIN_STATE.PixelMode) {
+                let card = PixelMode.getLastOf("deck2");
+                if (card !== null) {
+                    if (CollisionManager.MouseCollision(mouseX, mouseY, card.x, card.y, card.width, card.height)) {
+                        bCollidingDeck2 = true;
+                        if (lastHSDC[card.type] !== null) {
+                            if (Card.check(card.name, card.type, lastHSDC[card.type].name, card.type, false)) {
+                                bOkGo = true;
+                            }
+                        } else {
+                            if (card.name === "A") {
+                                bOkGo = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!bCollidingDeck2) {
+                    card = null;
+                    PixelMode.POS_LIST.forEach(pos => { //? Collision with c1 c2 etc.
+                        if (!bOkGo) {
+                            // log("pos: ")
+                            // log(pos.list)
+                            card = PixelMode.getLastOf(pos.list);
+                            // log("card last of " + pos.list) 
+                            // log(card)
+                            if (card !== null) {
+                                if (CollisionManager.MouseCollision(mouseX, mouseY, card.x, card.y, card.width, card.height)) {
+                                    // log("collision with : " + card.infos());
+                                    //? Collision with last card of c1, c2 etc.
+                                    if (lastHSDC[card.type] !== null) {
+                                        if (Card.check(card.name, card.type, lastHSDC[card.type].name, card.type, false)) {
+                                            bOkGo = true;
+                                        }
+                                    } else {
+                                        if (card.name === "A") {
+                                            bOkGo = true;
+                                        }
+                                    }
+    
+                                }
+                                
+                            }
+                        }
+                    })
+                }
+
+                if (bOkGo) {
+                    PixelMode.HSDC_LIST.forEach(HSDC => {
+                        if (HSDC.type === card.type) {
+                            PixelMode.OK_PANEL.x = HSDC.x
+                            PixelMode.OK_PANEL.y = HSDC.y;
+                        }
+                    });
+
+                    PixelMode.listToGoTo = card.type;
+
+                    Card.selected = card;
+                    
+                    yomiText.element.innerHTML = "";
+                    Card.inTransition = Card.selected;
+                    Card.selected.bMoving = true;
+                    TRANSITION = true;
+                    PixelMode.bDeck2Hover = false;
+
+                    let newSprite = new Sprite({ w: 24, h: 32 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
+                    newSprite.addAnimation("normal", { x: Card.selected.getSprite().getAnimation("normal").origin.x, y: Card.selected.getSprite().getAnimation("normal").origin.y });
+                    newSprite.changeAnimation("normal");
+                    newSprite.setDestination({ x: PixelMode.OK_PANEL.x, y: PixelMode.OK_PANEL.y });
+                    newSprite.setMoveSpeed(0.5);
+                    PixelMode.movingList.push(newSprite);
+                        
+                    PixelMode.lists[Card.selected.position].pop();
+                    PixelMode.lists[PixelMode.listToGoTo].push(Card.selected.sp);
+                    Card.selected.position = PixelMode.listToGoTo;
+                    Card.selected.bSelect = false;
+
+                    PixelMode.bDisplayOkPanel = false;
+                    Card.selected = null;
+                    PixelMode.listToGoTo = "";
+                    if (PixelMode.lists["deck"].length === 0 && PixelMode.lists["deck2"].length === 0) {
+                        PixelMode.DECK.changeAnimation("void");
+                    }
+                    return;
+                }
+            }
+
+
+            
+        }
+
+    });
 }
 
 /**
