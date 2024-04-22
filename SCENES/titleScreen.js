@@ -60,11 +60,11 @@ class TitleScreen {
         let firstFrameSpeed = 1;
 
         let normalBtnLeft = new Sprite({ w: 17, h: 17 }, -20, 3, normalBtn, "TitleScreen");
-        normalBtnLeft.addAnimation("normal", { x: 0, y: 544 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        normalBtnLeft.addAnimation("normal", { x: 0, y: 592 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         normalBtnLeft.changeAnimation("normal");
         TitleScreen.list.push(normalBtnLeft);
         let normalBtnRight = new Sprite({ w: 17, h: 17 }, normalBtn.width + 3, 3, normalBtn, "TitleScreen");
-        normalBtnRight.addAnimation("normal", { x: 0, y: 544 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        normalBtnRight.addAnimation("normal", { x: 0, y: 592 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         normalBtnRight.changeAnimation("normal");
         TitleScreen.list.push(normalBtnRight);
 
@@ -76,11 +76,11 @@ class TitleScreen {
         TitleScreen.list.push(pixelBtn.getSprite());
 
         let pixelBtnLeft = new Sprite({ w: 17, h: 17 }, -20, 3, pixelBtn, "TitleScreen");
-        pixelBtnLeft.addAnimation("normal", { x: 0, y: 561 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        pixelBtnLeft.addAnimation("normal", { x: 0, y: 609 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         pixelBtnLeft.changeAnimation("normal");
         TitleScreen.list.push(pixelBtnLeft);
         let pixelBtnRight = new Sprite({ w: 17, h: 17 }, pixelBtn.width + 3, 3, pixelBtn, "TitleScreen");
-        pixelBtnRight.addAnimation("normal", { x: 0, y: 561 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        pixelBtnRight.addAnimation("normal", { x: 0, y: 609 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         pixelBtnRight.changeAnimation("normal");
         TitleScreen.list.push(pixelBtnRight);
 
@@ -92,11 +92,11 @@ class TitleScreen {
         TitleScreen.list.push(kanjiBtn.getSprite());
 
         let kanjiBtnLeft = new Sprite({ w: 17, h: 17 }, -20, 3, kanjiBtn, "TitleScreen");
-        kanjiBtnLeft.addAnimation("normal", { x: 0, y: 578 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        kanjiBtnLeft.addAnimation("normal", { x: 0, y: 626 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         kanjiBtnLeft.changeAnimation("normal");
         TitleScreen.list.push(kanjiBtnLeft);
         let kanjiBtnRight = new Sprite({ w: 17, h: 17 }, kanjiBtn.width + 3, 3, kanjiBtn, "TitleScreen");
-        kanjiBtnRight.addAnimation("normal", { x: 0, y: 578 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        kanjiBtnRight.addAnimation("normal", { x: 0, y: 626 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         kanjiBtnRight.changeAnimation("normal");
         TitleScreen.list.push(kanjiBtnRight);
 
@@ -108,11 +108,11 @@ class TitleScreen {
         TitleScreen.list.push(hanziBtn.getSprite());
 
         let hanziBtnLeft = new Sprite({ w: 17, h: 17 }, -20, 3, hanziBtn, "TitleScreen");
-        hanziBtnLeft.addAnimation("normal", { x: 0, y: 595 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        hanziBtnLeft.addAnimation("normal", { x: 0, y: 643 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         hanziBtnLeft.changeAnimation("normal");
         TitleScreen.list.push(hanziBtnLeft);
         let hanziBtnRight = new Sprite({ w: 17, h: 17 }, hanziBtn.width + 3, 3, hanziBtn, "TitleScreen");
-        hanziBtnRight.addAnimation("normal", { x: 0, y: 595 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
+        hanziBtnRight.addAnimation("normal", { x: 0, y: 643 }, 4, [firstFrameSpeed, 0.05, 0.1, 0.05]);
         hanziBtnRight.changeAnimation("normal");
         TitleScreen.list.push(hanziBtnRight);
 

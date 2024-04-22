@@ -22,7 +22,7 @@ class Card {
         Hover: 1,
         FaceDown: 2,
     });
-    static COL_OFFSET = 68;
+    static COL_OFFSET = 74; //? PixelMode COL offset
     static font = "24px kyokasho";
 
     constructor(pPosition, pName, pType, pAnimX, pAnimY, pKanji) {
@@ -36,7 +36,7 @@ class Card {
             this.height = 64;
         } else {
             this.width = 24;
-            this.height = 32;
+            this.height = 37;
         }
 
         this.state = Card.STATE.Normal;
@@ -321,58 +321,58 @@ class Card {
 
         } else { //? PixelMode
 
-            Card.CARD_LIST["A♥"] = {name: "A",type: "♥",x: 0, y: 416};
-            Card.CARD_LIST["2♥"] = {name: "2",type: "♥",x: 24,y: 416};
-            Card.CARD_LIST["3♥"] = {name: "3",type: "♥",x: 48,y: 416};
-            Card.CARD_LIST["4♥"] = {name: "4",type: "♥",x: 72,y: 416};
-            Card.CARD_LIST["5♥"] = {name: "5",type: "♥",x: 96,y: 416};
-            Card.CARD_LIST["6♥"] = {name: "6",type: "♥",x: 120,y: 416};
-            Card.CARD_LIST["7♥"] = {name: "7",type: "♥",x: 144,y: 416};
-            Card.CARD_LIST["8♥"] = {name: "8",type: "♥",x: 168,y: 416};
-            Card.CARD_LIST["9♥"] = {name: "9",type: "♥",x: 192,y: 416};
-            Card.CARD_LIST["10♥"] ={name: "10",type: "♥",x: 216,y: 416};
-            Card.CARD_LIST["J♥"] = {name: "J",type: "♥",x: 240,y: 416};
-            Card.CARD_LIST["Q♥"] = {name: "Q",type: "♥",x: 264,y: 416};
-            Card.CARD_LIST["K♥"] = {name: "K",type: "♥",x: 288,y: 416};
-            Card.CARD_LIST["A♠"] = {name: "A",type: "♠",x: 0, y: 448};
-            Card.CARD_LIST["2♠"] = {name: "2",type: "♠",x: 24,y: 448};
-            Card.CARD_LIST["3♠"] = {name: "3",type: "♠",x: 48,y: 448};
-            Card.CARD_LIST["4♠"] = {name: "4",type: "♠",x: 72,y: 448};
-            Card.CARD_LIST["5♠"] = {name: "5",type: "♠",x: 96,y: 448};
-            Card.CARD_LIST["6♠"] = {name: "6",type: "♠",x: 120,y: 448};
-            Card.CARD_LIST["7♠"] = {name: "7",type: "♠",x: 144,y: 448};
-            Card.CARD_LIST["8♠"] = {name: "8",type: "♠",x: 168,y: 448};
-            Card.CARD_LIST["9♠"] = {name: "9",type: "♠",x: 192,y: 448};
-            Card.CARD_LIST["10♠"] ={name: "10",type: "♠",x: 216,y: 448};
-            Card.CARD_LIST["J♠"] = {name: "J",type: "♠",x: 240,y: 448};
-            Card.CARD_LIST["Q♠"] = {name: "Q",type: "♠",x: 264,y: 448};
-            Card.CARD_LIST["K♠"] = {name: "K",type: "♠",x: 288,y: 448};
-            Card.CARD_LIST["A♦"] = {name: "A",type: "♦",x: 0, y: 480};
-            Card.CARD_LIST["2♦"] = {name: "2",type: "♦",x: 24,y: 480};
-            Card.CARD_LIST["3♦"] = {name: "3",type: "♦",x: 48,y: 480};
-            Card.CARD_LIST["4♦"] = {name: "4",type: "♦",x: 72,y: 480};
-            Card.CARD_LIST["5♦"] = {name: "5",type: "♦",x: 96,y: 480};
-            Card.CARD_LIST["6♦"] = {name: "6",type: "♦",x: 120,y: 480};
-            Card.CARD_LIST["7♦"] = {name: "7",type: "♦",x: 144,y: 480};
-            Card.CARD_LIST["8♦"] = {name: "8",type: "♦",x: 168,y: 480};
-            Card.CARD_LIST["9♦"] = {name: "9",type: "♦",x: 192,y: 480};
-            Card.CARD_LIST["10♦"] ={name: "10",type: "♦",x: 216,y: 480};
-            Card.CARD_LIST["J♦"] = {name: "J",type: "♦",x: 240,y: 480};
-            Card.CARD_LIST["Q♦"] = {name: "Q",type: "♦",x: 264,y: 480};
-            Card.CARD_LIST["K♦"] = {name: "K",type: "♦",x: 288,y: 480};
-            Card.CARD_LIST["A♣"] = {name: "A",type: "♣",x: 0, y: 512};
-            Card.CARD_LIST["2♣"] = {name: "2",type: "♣",x: 24,y: 512};
-            Card.CARD_LIST["3♣"] = {name: "3",type: "♣",x: 48,y: 512};
-            Card.CARD_LIST["4♣"] = {name: "4",type: "♣",x: 72,y: 512};
-            Card.CARD_LIST["5♣"] = {name: "5",type: "♣",x: 96,y: 512};
-            Card.CARD_LIST["6♣"] = {name: "6",type: "♣",x: 120,y: 512};
-            Card.CARD_LIST["7♣"] = {name: "7",type: "♣",x: 144,y: 512};
-            Card.CARD_LIST["8♣"] = {name: "8",type: "♣",x: 168,y: 512};
-            Card.CARD_LIST["9♣"] = {name: "9",type: "♣",x: 192,y: 512};
-            Card.CARD_LIST["10♣"] ={name: "10",type: "♣",x: 216,y: 512};
-            Card.CARD_LIST["J♣"] = {name: "J",type: "♣",x: 240,y: 512};
-            Card.CARD_LIST["Q♣"] = {name: "Q",type: "♣",x: 264,y: 512};
-            Card.CARD_LIST["K♣"] = {name: "K",type: "♣",x: 288,y: 512};
+            Card.CARD_LIST["A♥"] = {name: "A",type: "♥",x: 0, y: 432};
+            Card.CARD_LIST["2♥"] = {name: "2",type: "♥",x: 24,y: 432};
+            Card.CARD_LIST["3♥"] = {name: "3",type: "♥",x: 48,y: 432};
+            Card.CARD_LIST["4♥"] = {name: "4",type: "♥",x: 72,y: 432};
+            Card.CARD_LIST["5♥"] = {name: "5",type: "♥",x: 96,y: 432};
+            Card.CARD_LIST["6♥"] = {name: "6",type: "♥",x: 120,y: 432};
+            Card.CARD_LIST["7♥"] = {name: "7",type: "♥",x: 144,y: 432};
+            Card.CARD_LIST["8♥"] = {name: "8",type: "♥",x: 168,y: 432};
+            Card.CARD_LIST["9♥"] = {name: "9",type: "♥",x: 192,y: 432};
+            Card.CARD_LIST["10♥"] ={name: "10",type: "♥",x: 216,y: 432};
+            Card.CARD_LIST["J♥"] = {name: "J",type: "♥",x: 240,y: 432};
+            Card.CARD_LIST["Q♥"] = {name: "Q",type: "♥",x: 264,y: 432};
+            Card.CARD_LIST["K♥"] = {name: "K",type: "♥",x: 288,y: 432};
+            Card.CARD_LIST["A♠"] = {name: "A",type: "♠",x: 0, y: 469};
+            Card.CARD_LIST["2♠"] = {name: "2",type: "♠",x: 24,y: 469};
+            Card.CARD_LIST["3♠"] = {name: "3",type: "♠",x: 48,y: 469};
+            Card.CARD_LIST["4♠"] = {name: "4",type: "♠",x: 72,y: 469};
+            Card.CARD_LIST["5♠"] = {name: "5",type: "♠",x: 96,y: 469};
+            Card.CARD_LIST["6♠"] = {name: "6",type: "♠",x: 120,y: 469};
+            Card.CARD_LIST["7♠"] = {name: "7",type: "♠",x: 144,y: 469};
+            Card.CARD_LIST["8♠"] = {name: "8",type: "♠",x: 168,y: 469};
+            Card.CARD_LIST["9♠"] = {name: "9",type: "♠",x: 192,y: 469};
+            Card.CARD_LIST["10♠"] ={name: "10",type: "♠",x: 216,y: 469};
+            Card.CARD_LIST["J♠"] = {name: "J",type: "♠",x: 240,y: 469};
+            Card.CARD_LIST["Q♠"] = {name: "Q",type: "♠",x: 264,y: 469};
+            Card.CARD_LIST["K♠"] = {name: "K",type: "♠",x: 288,y: 469};
+            Card.CARD_LIST["A♦"] = {name: "A",type: "♦",x: 0, y: 506};
+            Card.CARD_LIST["2♦"] = {name: "2",type: "♦",x: 24,y: 506};
+            Card.CARD_LIST["3♦"] = {name: "3",type: "♦",x: 48,y: 506};
+            Card.CARD_LIST["4♦"] = {name: "4",type: "♦",x: 72,y: 506};
+            Card.CARD_LIST["5♦"] = {name: "5",type: "♦",x: 96,y: 506};
+            Card.CARD_LIST["6♦"] = {name: "6",type: "♦",x: 120,y: 506};
+            Card.CARD_LIST["7♦"] = {name: "7",type: "♦",x: 144,y: 506};
+            Card.CARD_LIST["8♦"] = {name: "8",type: "♦",x: 168,y: 506};
+            Card.CARD_LIST["9♦"] = {name: "9",type: "♦",x: 192,y: 506};
+            Card.CARD_LIST["10♦"] ={name: "10",type: "♦",x: 216,y: 506};
+            Card.CARD_LIST["J♦"] = {name: "J",type: "♦",x: 240,y: 506};
+            Card.CARD_LIST["Q♦"] = {name: "Q",type: "♦",x: 264,y: 506};
+            Card.CARD_LIST["K♦"] = {name: "K",type: "♦",x: 288,y: 506};
+            Card.CARD_LIST["A♣"] = {name: "A",type: "♣",x: 0, y: 543};
+            Card.CARD_LIST["2♣"] = {name: "2",type: "♣",x: 24,y: 543};
+            Card.CARD_LIST["3♣"] = {name: "3",type: "♣",x: 48,y: 543};
+            Card.CARD_LIST["4♣"] = {name: "4",type: "♣",x: 72,y: 543};
+            Card.CARD_LIST["5♣"] = {name: "5",type: "♣",x: 96,y: 543};
+            Card.CARD_LIST["6♣"] = {name: "6",type: "♣",x: 120,y: 543};
+            Card.CARD_LIST["7♣"] = {name: "7",type: "♣",x: 144,y: 543};
+            Card.CARD_LIST["8♣"] = {name: "8",type: "♣",x: 168,y: 543};
+            Card.CARD_LIST["9♣"] = {name: "9",type: "♣",x: 192,y: 543};
+            Card.CARD_LIST["10♣"] ={name: "10",type: "♣",x: 216,y: 543};
+            Card.CARD_LIST["J♣"] = {name: "J",type: "♣",x: 240,y: 543};
+            Card.CARD_LIST["Q♣"] = {name: "Q",type: "♣",x: 264,y: 543};
+            Card.CARD_LIST["K♣"] = {name: "K",type: "♣",x: 288,y: 543};
             
             let x = 1;
             let xOffset = 27;

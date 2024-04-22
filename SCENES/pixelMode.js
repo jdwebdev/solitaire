@@ -103,34 +103,34 @@ class PixelMode {
         // endingBtn.setTextCenterY();
         // PixelMode.list.push(endingBtn.getSprite());
 
-        PixelMode.DECK = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["deck"].x, Card.POSITIONS["deck"].y, null, "card");
+        PixelMode.DECK = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["deck"].x, Card.POSITIONS["deck"].y, null, "card");
         PixelMode.DECK.addAnimation("normal", { x: 24, y: 384 });
         PixelMode.DECK.addAnimation("void", { x: 48, y: 384 });
         PixelMode.DECK.changeAnimation("normal");
         PixelMode.list.push(PixelMode.DECK);
 
-        PixelMode.DECK2 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["deck2"].x, Card.POSITIONS["deck2"].y, null, "card");
+        PixelMode.DECK2 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["deck2"].x, Card.POSITIONS["deck2"].y, null, "card");
         PixelMode.DECK2.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.DECK2.changeAnimation("normal");
         PixelMode.list.push(PixelMode.DECK2);
 
         // hearts (♥), spades (♠), diamonds (♦), clubs (♣).
-        PixelMode.DECK_HEART = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["♥"].x, Card.POSITIONS["♥"].y, null, "card");
+        PixelMode.DECK_HEART = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["♥"].x, Card.POSITIONS["♥"].y, null, "card");
         PixelMode.DECK_HEART.addAnimation("normal", { x: 72, y: 384 });
         PixelMode.DECK_HEART.changeAnimation("normal");
         PixelMode.list.push(PixelMode.DECK_HEART);
 
-        PixelMode.DECK_SPADE = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["♠"].x, Card.POSITIONS["♠"].y, null, "card");
+        PixelMode.DECK_SPADE = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["♠"].x, Card.POSITIONS["♠"].y, null, "card");
         PixelMode.DECK_SPADE.addAnimation("normal", { x: 96, y: 384 });
         PixelMode.DECK_SPADE.changeAnimation("normal");
         PixelMode.list.push(PixelMode.DECK_SPADE);
 
-        PixelMode.DECK_DIAMOND = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["♦"].x, Card.POSITIONS["♦"].y, null, "card");
+        PixelMode.DECK_DIAMOND = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["♦"].x, Card.POSITIONS["♦"].y, null, "card");
         PixelMode.DECK_DIAMOND.addAnimation("normal", { x: 120, y: 384 });
         PixelMode.DECK_DIAMOND.changeAnimation("normal");
         PixelMode.list.push(PixelMode.DECK_DIAMOND);
 
-        PixelMode.DECK_CLUB = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["♣"].x, Card.POSITIONS["♣"].y, null, "card");
+        PixelMode.DECK_CLUB = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["♣"].x, Card.POSITIONS["♣"].y, null, "card");
         PixelMode.DECK_CLUB.addAnimation("normal", { x: 144, y: 384 });
         PixelMode.DECK_CLUB.changeAnimation("normal");
         PixelMode.list.push(PixelMode.DECK_CLUB);
@@ -142,37 +142,37 @@ class PixelMode {
             {x: PixelMode.DECK_CLUB.x,    y: PixelMode.DECK_CLUB.y,    w: PixelMode.DECK_CLUB.width,    h: PixelMode.DECK_CLUB.height,    type: "♣"}
         ]
 
-        PixelMode.POS_1 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c1"].x, Card.POSITIONS["c1"].y, null, "card");
+        PixelMode.POS_1 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c1"].x, Card.POSITIONS["c1"].y, null, "card");
         PixelMode.POS_1.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_1.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_1);
 
-        PixelMode.POS_2 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c2"].x, Card.POSITIONS["c2"].y, null, "card");
+        PixelMode.POS_2 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c2"].x, Card.POSITIONS["c2"].y, null, "card");
         PixelMode.POS_2.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_2.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_2);
 
-        PixelMode.POS_3 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c3"].x, Card.POSITIONS["c3"].y, null, "card");
+        PixelMode.POS_3 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c3"].x, Card.POSITIONS["c3"].y, null, "card");
         PixelMode.POS_3.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_3.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_3);
 
-        PixelMode.POS_4 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c4"].x, Card.POSITIONS["c4"].y, null, "card");
+        PixelMode.POS_4 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c4"].x, Card.POSITIONS["c4"].y, null, "card");
         PixelMode.POS_4.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_4.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_4);
 
-        PixelMode.POS_5 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c5"].x, Card.POSITIONS["c5"].y, null, "card");
+        PixelMode.POS_5 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c5"].x, Card.POSITIONS["c5"].y, null, "card");
         PixelMode.POS_5.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_5.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_5);
 
-        PixelMode.POS_6 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c6"].x, Card.POSITIONS["c6"].y, null, "card");
+        PixelMode.POS_6 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c6"].x, Card.POSITIONS["c6"].y, null, "card");
         PixelMode.POS_6.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_6.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_6);
 
-        PixelMode.POS_7 = new Sprite({ w: 24, h: 32 }, Card.POSITIONS["c7"].x, Card.POSITIONS["c7"].y, null, "card");
+        PixelMode.POS_7 = new Sprite({ w: 24, h: 37 }, Card.POSITIONS["c7"].x, Card.POSITIONS["c7"].y, null, "card");
         PixelMode.POS_7.addAnimation("normal", { x: 192, y: 384 });
         PixelMode.POS_7.changeAnimation("normal");
         PixelMode.list.push(PixelMode.POS_7);
@@ -191,13 +191,12 @@ class PixelMode {
         PixelMode.hover.addAnimation("active", { x: 336, y: 64 });
         PixelMode.hover.changeAnimation("active");
 
-        PixelMode.hoverPanel = new Panel({ w: 24, h: 32, v: 3 }, 10, 200, null, "PixelMode", PixelMode.STATE.Main, "", 3);
-        // PixelMode.selectPanel = new Panel({ w: 24, h: 32, v: 11 }, 10, 200, null, "PixelMode", PixelMode.STATE.Main, "", 4);
-        PixelMode.selectPanel = new Sprite({ w: 24, h: 32 }, 0, 0, null, "card");
+        PixelMode.hoverPanel = new Panel({ w: 24, h: 37, v: 3 }, 10, 200, null, "PixelMode", PixelMode.STATE.Main, "", 3);
+        PixelMode.selectPanel = new Sprite({ w: 24, h: 37 }, 0, 0, null, "card");
         PixelMode.selectPanel.addAnimation("normal", {x: 240, y: 384 });
         PixelMode.selectPanel.changeAnimation("normal");
 
-        PixelMode.OK_PANEL = new Sprite({ w: 24, h: 32 }, 0, 0, null, "card");
+        PixelMode.OK_PANEL = new Sprite({ w: 24, h: 37 }, 0, 0, null, "card");
         PixelMode.OK_PANEL.addAnimation("normal", { x: 168, y: 384 });
         PixelMode.OK_PANEL.changeAnimation("normal");
 
@@ -480,7 +479,7 @@ class PixelMode {
 
         let card = PixelMode.lists[PixelMode.currentPosition][PixelMode.lists[PixelMode.currentPosition].length-1].parent;
 
-        let newSprite = new Sprite({ w: 24, h: 32 }, card.x, card.y, null, "end"); //? Moving Card
+        let newSprite = new Sprite({ w: 24, h: 37 }, card.x, card.y, null, "end"); //? Moving Card
         newSprite.addAnimation("normal", { x: card.sp.getAnimation("normal").origin.x, y: card.sp.getAnimation("normal").origin.y});
         newSprite.changeAnimation("normal");
         newSprite.sx = rnd(3, 26) / 10; //! sx = (-0.5 => -2.5 || 0.5 => 2.5)

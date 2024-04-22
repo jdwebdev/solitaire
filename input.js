@@ -2054,7 +2054,7 @@ if (Input.MOUSE_CLICK) {
                                         card.bMoving = true
                                         TRANSITION = true;
 
-                                        let newSprite = new Sprite({ w: 24, h: 32 }, card.x, card.y, null, "mc"); //? Moving Card
+                                        let newSprite = new Sprite({ w: 24, h: 37 }, card.x, card.y, null, "mc"); //? Moving Card
                                         newSprite.addAnimation("normal", { x: card.getSprite().getAnimation("normal").origin.x, y: card.getSprite().getAnimation("normal").origin.y });
                                         newSprite.changeAnimation("normal");
                                         newSprite.setDestination({ x: PixelMode.OK_PANEL.x, y: PixelMode.OK_PANEL.y + offsetY});
@@ -2094,7 +2094,7 @@ if (Input.MOUSE_CLICK) {
                                 Card.inTransition = Card.selected;
                                 TRANSITION = true;
 
-                                let newSprite = new Sprite({ w: 24, h: 32 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
+                                let newSprite = new Sprite({ w: 24, h: 37 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
                                 newSprite.addAnimation("normal", { x: Card.selected.getSprite().getAnimation("normal").origin.x, y: Card.selected.getSprite().getAnimation("normal").origin.y });
                                 newSprite.changeAnimation("normal");
                                 newSprite.setDestination({ x: PixelMode.OK_PANEL.x, y: PixelMode.OK_PANEL.y });
@@ -2533,7 +2533,7 @@ if (Input.DOUBLE_CLICK) {
                     TRANSITION = true;
                     PixelMode.bDeck2Hover = false;
 
-                    let newSprite = new Sprite({ w: 24, h: 32 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
+                    let newSprite = new Sprite({ w: 24, h: 37 }, Card.selected.x, Card.selected.y, null, "mc"); //? Moving Card
                     newSprite.addAnimation("normal", { x: Card.selected.getSprite().getAnimation("normal").origin.x, y: Card.selected.getSprite().getAnimation("normal").origin.y });
                     newSprite.changeAnimation("normal");
                     newSprite.setDestination({ x: PixelMode.OK_PANEL.x, y: PixelMode.OK_PANEL.y });
