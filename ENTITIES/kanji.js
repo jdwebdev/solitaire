@@ -1984,6 +1984,60 @@ class Z_word {
         Z_word.rawList.push(["碗","wǎn","Bol"]);
         Z_word.rawList.push(["距离","jùlí",	"Distance"]);
 
+        Z_word.rawList.push(["有请",	"yǒuqǐng",	"Demander"]);
+        Z_word.rawList.push(["详细",	"xiángxì",	"Détaillé, minutieux en détails"]);
+        Z_word.rawList.push(["光临",	"guānglín",	"La présence d'un hôte (honorable)"]);
+        Z_word.rawList.push(["指导",	"zhǐdǎo",	"Instruction; instruire, guider"]);
+        Z_word.rawList.push(["全部",	"quánbù",	"Tout, total"]);
+        Z_word.rawList.push(["城里",	"chéngli",	"En ville"]);
+        Z_word.rawList.push(["所",	    "suǒ",	    "(Spécificatif pour une école ou un institut)"]);
+        Z_word.rawList.push(["捐款",	"juān kuǎn",	"Donation; faire une donation"]);
+        Z_word.rawList.push(["投资",	"tóu zī",	"Investissement; investir"]);
+        Z_word.rawList.push(["县",	    "xiàn",	    "District"]);
+        Z_word.rawList.push(["成长",	"chéngzhǎng",	"Croissance; croître, grandir"]);
+        Z_word.rawList.push(["不利",	"búlì",	    "Défavorable, désavantageux"]);
+        Z_word.rawList.push(["顺利",	"shùnlì",	"Sans obstacle; favorable"]);
+        Z_word.rawList.push(["困难",	"kùnnan",	"Difficulté, peine; difficile"]);
+        Z_word.rawList.push(["班",	    "bān",	    "Classe, groupe"]);
+        Z_word.rawList.push(["缺少",	"quēshǎo",	"Manquer, faire défaut"]);
+        Z_word.rawList.push(["资金",	"zījīn",	"Capital"]);
+        Z_word.rawList.push(["底",	    "dī",	    "Baisser, incliner"]);
+        Z_word.rawList.push(["难为情",	"nánwéiqíng",	"Embarrassé, confus, timide"]);
+        Z_word.rawList.push(["家访",	"jiāfǎng",	"Visiter la famille d'un élève"]);
+        Z_word.rawList.push(["亲切",	"qīnqiè",	"Cordial, chaleureux, intime"]);
+        Z_word.rawList.push(["沙发",	"shāfā",	"Canapé"]);
+        Z_word.rawList.push(["家长",	"jiāzhǎng",	"Parents"]);
+        Z_word.rawList.push(["猜想",	"cāixiǎng",	"Supposition; supposer, deviner"]);
+        Z_word.rawList.push(["惹",	    "rě",	    "Offenser, provoquer"]);
+        Z_word.rawList.push(["推",	    "tuī",	    "Pousser"]);
+        Z_word.rawList.push(["办公室",	"bàngōngshì",	"Office, bureau"]);
+        Z_word.rawList.push(["点头",	"diǎn tóu",	"Hocher la tête"]);
+        Z_word.rawList.push(["让座",	"ràng zuò",	"Offrir ou laisser sa place à qqn; inviter qqn à s'asseoir"]);
+        Z_word.rawList.push(["悬",	    "xuán",	    "Suspendre"]);
+        Z_word.rawList.push(["总算",	"zǒngsuàn",	"Finalement, enfin"]);
+        Z_word.rawList.push(["嘴 [张]",	"zuǐ",	    "Bouche"]);
+        Z_word.rawList.push(["考",	    "kǎo",	    "Passer un examen"]);
+        Z_word.rawList.push(["倒数",	"dàoshǔ",	"Compter à rebours"]);
+        Z_word.rawList.push(["名",	    "míng",	    "Le classement dans un concours, place dans un classement"]);
+        Z_word.rawList.push(["瞪",	    "dèng",	    "Regarder fixement, dévisager"]);
+        Z_word.rawList.push(["莫名其妙", "mòmíngqímiào",	"Incompréhensible, sans rime ni raison"]);
+        Z_word.rawList.push(["华侨",	"huáqiáo",	"Chinois d'outre-mer"]);
+        Z_word.rawList.push(["修建",	"xiūjiàn",	"Construire, ériger"]);
+        Z_word.rawList.push(["竣工",	"jùngōng",	"Achever; achèvement"]);
+        Z_word.rawList.push(["剪彩",	"jiǎn cǎi",	"Couper le ruban de l'inauguration"]);
+        Z_word.rawList.push(["校舍",	"xiàoshě",	"Cité universitaire, résidence universitaire"]);
+        Z_word.rawList.push(["表示",	"biǎoshì",	"Exprimer, indiquer"]);
+        Z_word.rawList.push(["贫困",	"pínkùn",	"Pauvre, démuni"]);
+        Z_word.rawList.push(["捐赠",	"juānzèng",	"Offrir, donner, contribuer"]);
+        Z_word.rawList.push(["物品",	"wùpǐn",	"Articles, matériaux"]);
+        Z_word.rawList.push(["专科",	"zhuānkē",	"Université secondaire"]);
+        Z_word.rawList.push(["奖学金",	"jiǎngxuéjīn",	"Bourse d'études"]);
+        Z_word.rawList.push(["研究生",	"yánjiūshēng",	"Étudiant en master"]);
+        Z_word.rawList.push(["费用",	"fèiyòng",	"Dépenses, frais"]);
+        Z_word.rawList.push(["赵",	    "Zhào",	    "Zhao (Nom de famille)"]);
+        Z_word.rawList.push(["陈",	    "Chén",	    "Chen (Nom de famille)"]);
+        Z_word.rawList.push(["刘",	    "Liú",	    "Liu (Nom de famille)"]);
+
         Z_word.rawList.forEach(w => {
             let z = new Z_word(w[0],w[1],w[2]);
         });
@@ -3194,6 +3248,32 @@ class Hanzi {
         let hanzi_荡 = new Hanzi("荡",	"dàng");
         let hanzi_碗 = new Hanzi("碗",	"wǎn");
         let hanzi_距 = new Hanzi("距",	"jù");
+
+        let hanzi_详 = new Hanzi("详", "xiáng");
+        let hanzi_临 = new Hanzi("临", "lín");
+        let hanzi_指 = new Hanzi("指", "zhǐ");
+        let hanzi_捐 = new Hanzi("捐", "juān");
+        let hanzi_县 = new Hanzi("县", "xiàn");
+        let hanzi_困 = new Hanzi("困", "kùn");
+        let hanzi_缺 = new Hanzi("缺", "quē");
+        let hanzi_底 = new Hanzi("底", "dī");
+        let hanzi_切 = new Hanzi("切", "qiè");
+        let hanzi_猜 = new Hanzi("猜", "cāi");
+        let hanzi_惹 = new Hanzi("惹", "rě");
+        let hanzi_悬 = new Hanzi("悬", "xuán");
+        let hanzi_瞪 = new Hanzi("瞪", "dèng");
+        let hanzi_莫 = new Hanzi("莫", "mò");
+        let hanzi_妙 = new Hanzi("妙", "miào");
+        let hanzi_侨 = new Hanzi("侨", "qiáo");
+        let hanzi_竣 = new Hanzi("竣", "jùn");
+        let hanzi_剪 = new Hanzi("剪", "jiǎn");
+        let hanzi_示 = new Hanzi("示", "shì");
+        let hanzi_贫 = new Hanzi("贫", "pín");
+        let hanzi_赠 = new Hanzi("赠", "zèng");
+        let hanzi_研 = new Hanzi("研", "yán");
+        let hanzi_赵 = new Hanzi("赵", "Zhào");
+        let hanzi_陈 = new Hanzi("陈", "Chén");
+        let hanzi_刘 = new Hanzi("刘", "Liú");
 
     }
 
