@@ -2001,7 +2001,7 @@ class Z_word {
         Z_word.rawList.push(["班",	    "bān",	    "Classe, groupe"]);
         Z_word.rawList.push(["缺少",	"quēshǎo",	"Manquer, faire défaut"]);
         Z_word.rawList.push(["资金",	"zījīn",	"Capital"]);
-        Z_word.rawList.push(["底",	    "dī",	    "Baisser, incliner"]);
+        Z_word.rawList.push(["低",	    "dī",	    "Baisser, incliner"]);
         Z_word.rawList.push(["难为情",	"nánwéiqíng",	"Embarrassé, confus, timide"]);
         Z_word.rawList.push(["家访",	"jiāfǎng",	"Visiter la famille d'un élève"]);
         Z_word.rawList.push(["亲切",	"qīnqiè",	"Cordial, chaleureux, intime"]);
@@ -3256,7 +3256,6 @@ class Hanzi {
         let hanzi_县 = new Hanzi("县", "xiàn");
         let hanzi_困 = new Hanzi("困", "kùn");
         let hanzi_缺 = new Hanzi("缺", "quē");
-        let hanzi_底 = new Hanzi("底", "dī");
         let hanzi_切 = new Hanzi("切", "qiè");
         let hanzi_猜 = new Hanzi("猜", "cāi");
         let hanzi_惹 = new Hanzi("惹", "rě");
