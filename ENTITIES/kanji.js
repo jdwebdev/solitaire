@@ -2062,7 +2062,7 @@ class Z_word {
         Z_word.rawList.push(["头彩",	"tóucǎi",	"Gros lot, jackpot"]);
         Z_word.rawList.push(["假若",	"jiǎruò",	"Si"]);
         Z_word.rawList.push(["大部分",	"dàbùfen",	"La plupart"]);
-        Z_word.rawList.push(["愿望",	"yuàngwàng","Désir, souhait, aspiration"]);
+        Z_word.rawList.push(["愿望",	"yuànwàng","Désir, souhait, aspiration"]);
         Z_word.rawList.push(["毕竟",	"bìjìng",	"En fin de compte, finalement, après tout"]);
         Z_word.rawList.push(["者",	    "zhě",	    "-eur, -iste"]);
         Z_word.rawList.push(["提供",	"tígōng",	"Fournir"]);
@@ -2076,6 +2076,7 @@ class Z_word {
         Z_word.rawList.push(["意味着",	"yìwèizhe",	"Signifier, impliquer"]);
         Z_word.rawList.push(["反而",	"fǎn'ér",	"Au contraire, par contre, mais"]);
         Z_word.rawList.push(["如此",	"rúcǐ",	    "Si, tel, comme ça"]);
+        Z_word.rawList.push(["虽然如此", "suīrán rúcǐ",	"Cela dit, Quand même"]);
         Z_word.rawList.push(["白日梦",	"báirìmèng","Rêve éveillé"]);
         Z_word.rawList.push(["能够",	"nénggòu",	"Pouvoir, être capable de"]);
         Z_word.rawList.push(["实现",	"shíxiàn",	"Réaliser, achever"]);
@@ -2085,6 +2086,7 @@ class Z_word {
         Z_word.rawList.push(["猜中",	"cāi zhòng",	"Deviner juste"]);
         Z_word.rawList.push(["打枪",	"dǎ qiāng",	"Tirer un coup de feu"]);
         Z_word.rawList.push(["打中",	"dǎ zhòng",	"Tirer et viser juste"]);
+        Z_word.rawList.push(["营业",	"yíngyè",	"Entreprise, vente"]);
         Z_word.rawList.push(["结论",	"jiélùn",	"Conclusion"]);
         Z_word.rawList.push(["承受",	"chéngshòu",	"Supporter, endurer"]);
         Z_word.rawList.push(["穷",	    "qióng",	"Pauvre"]);
@@ -3345,6 +3347,7 @@ class Hanzi {
         let hanzi_供 = new Hanzi("供", "gōng");
         let hanzi_购 = new Hanzi("购", "gòu");
         let hanzi_创 = new Hanzi("创", "chuàng");
+        let hanzi_营 = new Hanzi("营", "yíng");
         let hanzi_刊 = new Hanzi("刊", "kān");
         let hanzi_承 = new Hanzi("承", "chéng");
         let hanzi_穷 = new Hanzi("穷", "qióng");
