@@ -272,8 +272,11 @@ function init() {
 
     Tango.init();
     Kanji.init();
-    Z_word.init();
-    Hanzi.init();
+
+    
+    readFile("./tsv/NZH - 当代中文 课本.tsv", "word");
+    // Z_word.init();
+    // Hanzi.init();
 
     if (shortcut_tomainmenu) {
         MainMenu.init();

@@ -3366,3 +3366,52 @@ class Hanzi {
         return last52List;
     }
 }
+
+function readFile(pFile, pType) {
+    let rawFile = new XMLHttpRequest();
+    rawFile.open("GET", pFile, true);
+    rawFile.onreadystatechange = function () {
+        if (rawFile.readyState === 4) {
+            if (rawFile.status === 200 || rawFile.status == 0) {
+                tsvFile = rawFile.responseText;
+                switch(pType) {
+                    case "hanzi":
+                        createHanzi(tsvFile);
+                        break;
+                    case "word":
+                        createZ_WORD(tsvFile);
+                        break;
+                }
+            }
+        }
+    }
+    rawFile.send(null); 
+}
+
+function createHanzi(pFile) {
+    let row = pFile.split(/\r\n|\n/);
+    let test;
+    for (let i = 1; i < row.length; i++) {
+        row[i] = row[i].split('\t');
+        //?              汉字，      拼音
+        test = new Hanzi(row[i][0], row[i][1]);
+    }
+
+    // readFile("./tsv/NZH - 当代中文 课本.tsv", "word");
+}
+
+function createZ_WORD(pFile, pType) {
+    // console.log("4) Create Z_WORD");
+    let row = pFile.split(/\r\n|\n/);
+    let test;
+    let id = 1;
+    for (let i = 1; i < row.length; i++) {
+        row[i] = row[i].split('\t');
+        //?               word,      pinyin,    yisi
+        test = new Z_word(row[i][0], row[i][1], row[i][2]);
+        id++;
+    }
+
+    readFile("./tsv/NZH - 当代中文 汉字.tsv", "hanzi");
+    // insertVocRefIntoHanzi();
+}
