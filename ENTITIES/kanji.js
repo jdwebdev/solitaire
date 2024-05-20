@@ -110,6 +110,7 @@ class Kanji {
     constructor(pKanji, pReading) {
         this.kanji = pKanji;
         this.reading = pReading;
+        this.fanti = "";
         this.examples = "";
         this.exList = [];
         this.insertTango();
@@ -2113,9 +2114,10 @@ class Hanzi {
     static list = [];
     static tangoList = [];
 
-    constructor(pKanji, pReading) {
+    constructor(pKanji, pReading, pFanti = "") {
         this.kanji = pKanji;
         this.reading = pReading;
+        this.fanti = pFanti;
         this.examples = "";
         this.exList = [];
         this.insertZword();
@@ -3393,8 +3395,8 @@ function createHanzi(pFile) {
     let test;
     for (let i = 1; i < row.length; i++) {
         row[i] = row[i].split('\t');
-        //?              汉字，      拼音
-        test = new Hanzi(row[i][0], row[i][1]);
+        //?              汉字，      拼音       繁体
+        test = new Hanzi(row[i][0], row[i][1], row[i][4]);
     }
 
     // readFile("./tsv/NZH - 当代中文 课本.tsv", "word");

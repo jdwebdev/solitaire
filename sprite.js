@@ -704,7 +704,7 @@ class Sprite {
                         sp = Game.hoverPanel.getSprite();
                         if (!MOBILE && Game.currentGameType !== Game.GAME_TYPE.Normal) {
                             if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect) {
-                                let innerHTML = card.kanji.reading + "<br/>";
+                                let innerHTML = card.kanji.reading + " " + card.kanji.fanti + "<br/>";
                                 card.kanji.exList.forEach(t => {
                                     innerHTML += t + "<br/>"
                                 });
@@ -718,7 +718,7 @@ class Sprite {
                         Game.selectPanel.draw(ctx);
 
                         if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect && Game.currentGameType !== Game.GAME_TYPE.Normal) {
-                            let innerHTML = card.kanji.reading + "<br/>";
+                            let innerHTML = card.kanji.reading + " " + card.kanji.fanti + "<br/>";
                             card.kanji.exList.forEach(t => {
                                 innerHTML += t + "<br/>"
                             });
@@ -797,7 +797,7 @@ class Sprite {
                         sp = Game.hoverPanel.getSprite();
                         if (card.state !== Card.STATE.FaceDown) {
                             if (!MOBILE && !Card.multiHover && !Card.multiSelect && Game.currentGameType !== Game.GAME_TYPE.Normal) {
-                                let innerHTML = card.kanji.reading + "<br/>";
+                                let innerHTML = card.kanji.reading + " " + card.kanji.fanti + "<br/>";
                                 card.kanji.exList.forEach(t => {
                                     innerHTML += t + "<br/>"
                                 });
@@ -810,7 +810,7 @@ class Sprite {
                         Game.selectPanel.y = card.y;
                         Game.selectPanel.draw(ctx);
                         if (card.state !== Card.STATE.FaceDown && !Card.multiHover && !Card.multiSelect && Game.currentGameType !== Game.GAME_TYPE.Normal) {
-                            let innerHTML = card.kanji.reading + "<br/>";
+                            let innerHTML = card.kanji.reading + " " + card.kanji.fanti + "<br/>";
                             card.kanji.exList.forEach(t => {
                                 innerHTML += t + "<br/>"
                             });

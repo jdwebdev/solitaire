@@ -617,7 +617,7 @@ class Game {
 
             let card = Game.getLastOf("deck2");
             if (!MOBILE && Game.currentGameType !== Game.GAME_TYPE.Normal) {
-                let innerHTML = card.kanji.reading + "<br/>";
+                let innerHTML = card.kanji.reading + " " + card.kanji.fanti + "<br/>";
                 card.kanji.exList.forEach(t => {
                     innerHTML += t + "<br/>"
                 });
