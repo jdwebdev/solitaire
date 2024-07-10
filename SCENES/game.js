@@ -11,6 +11,7 @@ class Game {
         Hanzi: 2
     });
     static currentGameType = Game.GAME_TYPE.Normal;
+    static hanzi52;
 
     static currentState = Game.STATE.Main;
     static list = [];
@@ -222,8 +223,14 @@ class Game {
             Card.font = "24px kyokasho";
             yomiText.element.style.font= yomiText.size + "px kyokasho";
         } else if (Game.currentGameType == Game.GAME_TYPE.Hanzi) {
-            randomKanjiList = Hanzi.last52();
-            randomKanjiList = randomizer(randomKanjiList, randomKanjiList.length);
+            // randomKanjiList = randomizer(randomKanjiList, randomKanjiList.length);
+            if (Game.hanzi52) {
+                randomKanjiList = Hanzi.last52();
+            } else {
+                randomKanjiList = randomizer(Hanzi.fuxiList, Hanzi.fuxiList.length);
+            }
+
+            log(randomKanjiList)
             Card.font = "24px arial";
             yomiText.element.style.font = yomiText.size + "px arial";
         }

@@ -36,8 +36,6 @@ function LoadAssets() {
     Sound.list["back"] = new Sound("back.mp3");
     Sound.list["click"] = new Sound("click.mp3");
 
-    Sound.list["maintheme"] = new Sound("music/PG.wav", "m", true);
-
     //? Translation file
     // readTSVFile("./translation - 1.tsv");
 }

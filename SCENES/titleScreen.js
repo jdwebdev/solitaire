@@ -116,6 +116,11 @@ class TitleScreen {
         hanziBtnRight.changeAnimation("normal");
         TitleScreen.list.push(hanziBtnRight);
 
+        let fuxiHanziBtn = new Button({ w: 40, h: 20, v: 7}, centerX(40), 215, null, { cb: TitleScreen.start, arg: 5 }, "TitleScreen", TitleScreen.STATE.Main, "復習", 1);
+        fuxiHanziBtn.setFreeLabel();
+        fuxiHanziBtn.setFontColor(CARD_BTN_SDW_COLOR, BLACK_COLOR, CARD_BTN_SDW_COLOR);
+        fuxiHanziBtn.setTextCenterY();
+        TitleScreen.list.push(fuxiHanziBtn.getSprite());
 
         Button.resetTypeState("TitleScreen", TitleScreen.STATE.Main);
     }
@@ -140,12 +145,15 @@ class TitleScreen {
                 changeMode();
                 break;
             case 4:
+            case 5:
                 mainState = MAIN_STATE.Game;
                 Game.currentGameType = Game.GAME_TYPE.Hanzi;
+                Game.hanzi52 = (pArg === 4);
                 PIXEL_MODE = 1;
                 Card.initCardList();
                 changeMode();
                 break;
+        
         }
     }
 
