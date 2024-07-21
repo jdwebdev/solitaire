@@ -48,7 +48,7 @@
 是	shì	Être	1		日字旁|日		
 吗	ma，má	(Question dont la réponse est oui ou non)	1	嗎	口字旁|口		
 不	bù	Non, ne pas	1		一字旁|一		
-同	tóng	Ensemble, semblable	1		同字框|冂		
+同	tóng，tòng	Ensemble, semblable	1		同字框|冂		
 们	men	(Suffixe ou pluriel)	1	們	单人旁|亻		
 老	lǎo	Vieux	1		老字旁|耂		
 师	shī	Professeur, maître	1	師	巾字旁|巾		
@@ -324,7 +324,7 @@
 间	jiān		9	間	门字框|门		
 己	jǐ	Soi-même	9		己字旁|己		
 办	bàn	Faire	9	辦	力字旁|力		
-熟	shú		9		四点底|灬		
+熟	shú，shóu		9		四点底|灬		
 悉	xī		9		心字旁|心		
 些	xiē		9		止字旁|止		
 照	zhào		9		四点底|灬		
@@ -1365,3 +1365,29 @@
 击	jī		4-12	擊	凶字框|凵		
 谓	wèi		4-12	謂	言字旁|讠		
 苏	sū		4-12	蘇	草字头|艹		
+线	xiàn		MC2-1	線綫	绞丝旁|纟		-
+胡	hú		MC2-1		月字旁|月		
+填	tián		MC2-1		提土旁|土		
+判	pàn		MC2-1		立刀旁|刂		
+声	shēng		MC2-1	聲	士字旁|士		
+喊	hǎn		MC2-1		口字旁|口		
+哎	āi		MC2-1		口字旁|口		
+石	shí		MC2-1		石字旁|石		
+啦	la		MC2-1		口字旁|口		
+喂	wèi		MC2-1		口字旁|口		
+啊	a		MC2-1		口字旁|口		
+呀	ya		MC2-1		口字旁|口		
+哇	wa		MC2-1		口字旁|口		
+狮	shī		MC2-1	獅	反犬旁|犭		
+哦	ò		MC2-1		口字旁|口		
+稍	shāo		MC2-1		禾木旁|禾		
+囫	hú		MC2-1		方框儿，国字框|囗		
+囵	lún		MC2-1	圇	方框儿，国字框|囗		
+吞	tūn		MC2-1		口字旁|口		
+枣	zǎo		MC2-1	棗	木字旁|木		
+梨	lí		MC2-1		木字旁|木		
+嚼	jiáo		MC2-1		口字旁|口		
+咽	yàn		MC2-1	嚥	口字旁|口		
+苹	píng		MC2-1	蘋	草字头|艹		
+忽	hū		MC2-1		心字旁|心		
+私	sī		MC2-1		禾木旁|禾		
