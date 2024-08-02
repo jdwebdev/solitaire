@@ -73,7 +73,7 @@ if (windowWidth <= 1000) {
     MOBILE = true;
     yomiText.x = 5;
     yomiText.y = 325;
-    yomiText.size = 10;
+    yomiText.size = 15;
 } else {
     currentScale = SCALE.STATE_2;
     yomiText.x = 10;
